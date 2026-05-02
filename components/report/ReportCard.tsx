@@ -55,7 +55,7 @@ export function ReportCard({ laporan }: ReportCardProps) {
 
     return (
         <Link
-            href={`/laporan/${laporan.id}`}
+            href={`/report/${laporan.id}`}
             className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
         >
             {/* Foto */}
