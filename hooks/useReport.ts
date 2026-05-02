@@ -54,7 +54,7 @@ export function useCreateLaporan() {
         onSuccess: (res) => {
             // Invalidate list & mine supaya langsung muncul di dashboard
             queryClient.invalidateQueries({ queryKey: queryKeys.laporan.all });
-            router.push(`/laporan/${res.data.id}`);
+            router.push(`/report/${res.data.id}`);
         },
     });
 }
@@ -71,7 +71,7 @@ export function useUpdateLaporan(id: string) {
             // Invalidate detail & list
             queryClient.invalidateQueries({ queryKey: queryKeys.laporan.detail(id) });
             queryClient.invalidateQueries({ queryKey: queryKeys.laporan.all });
-            router.push(`/laporan/${id}`);
+            router.push(`/report/${id}`);
         },
     });
 }
@@ -86,7 +86,7 @@ export function useDeleteLaporan() {
         mutationFn: (id: string) => deleteLaporan(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: queryKeys.laporan.all });
-            router.push("/laporan/saya");
+            router.push("/report/saya");
         },
     });
 }

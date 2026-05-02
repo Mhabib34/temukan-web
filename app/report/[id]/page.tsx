@@ -335,7 +335,7 @@ export default function LaporanDetailPage() {
                         {isOwner && (
                             <div className="flex gap-2">
                                 <Link
-                                    href={`/laporan/${laporan.id}/edit`}
+                                    href={`/report/${laporan.id}/edit`}
                                     className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-medium text-stone-700 transition hover:border-orange-300 hover:text-orange-600"
                                 >
                                     <Edit2 className="h-4 w-4" />

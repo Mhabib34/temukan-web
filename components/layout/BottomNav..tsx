@@ -24,13 +24,13 @@ const TABS: Tab[] = [
     },
     {
         label: "Laporan",
-        href: "/laporan",
+        href: "/report",
         icon: <FileText size={22} strokeWidth={1.8} />,
     },
     {
         // FAB center — ditangani khusus
         label: "Buat",
-        href: "/laporan/baru",
+        href: "/report/new",
         icon: <Plus size={26} strokeWidth={2.2} />,
         protected: true,
     },

@@ -12,7 +12,7 @@ import { useState, useRef, useEffect } from "react";
 
 const NAV_LINKS = [
     { label: "Beranda", href: "/" },
-    { label: "Laporan", href: "/laporan" },
+    { label: "Laporan", href: "/report" },
     { label: "Peta", href: "/peta" },
     { label: "Match", href: "/match", protected: true },
 ];
@@ -79,7 +79,7 @@ function UserDropdown() {
                             Profil Saya
                         </Link>
                         <Link
-                            href="/laporan/saya"
+                            href="/report/me"
                             onClick={() => setOpen(false)}
                             className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-stone-600 transition-colors hover:bg-stone-50"
                         >
@@ -180,7 +180,7 @@ export function Navbar() {
 
                             {/* Buat laporan CTA */}
                             <button
-                                onClick={() => router.push("/laporan/baru")}
+                                onClick={() => router.push("/report/new")}
                                 className="rounded-full bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-orange-200 transition-all hover:bg-orange-600 active:scale-95"
                             >
                                 + Buat Laporan

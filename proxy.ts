@@ -5,8 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 // Middleware cek cookie `access_token` (httpOnly, di-set backend saat login web).
 
 const PROTECTED_ROUTES = [
-    "/laporan/baru",
-    "/laporan/saya",
+    "/report/new",
+    "/report/me",
     "/notifikasi",
     "/match",
     "/profil",
@@ -14,7 +14,7 @@ const PROTECTED_ROUTES = [
 
 // Route dengan pattern dinamis yang protected
 const PROTECTED_DYNAMIC_PATTERNS = [
-    /^\/laporan\/[^/]+\/edit$/,   // /laporan/[id]/edit
+    /^\/report\/[^/]+\/edit$/,   // /laporan/[id]/edit
 ];
 
 // Route yang hanya boleh diakses saat BELUM login (redirect jika sudah login)

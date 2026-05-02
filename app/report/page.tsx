@@ -36,13 +36,13 @@ function useFilters() {
             });
             // Reset ke page 1 saat filter berubah
             if (!("page" in updates)) current.set("page", "1");
-            router.push(`/laporan?${current.toString()}`);
+            router.push(`/report?${current.toString()}`);
         },
         [searchParams, router]
     );
 
     const clearAll = useCallback(() => {
-        router.push("/laporan");
+        router.push("/report");
     }, [router]);
 
     const activeFilterCount = [
