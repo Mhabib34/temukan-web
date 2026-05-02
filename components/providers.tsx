@@ -69,8 +69,6 @@ export function Providers({ children }: ProvidersProps) {
             {/* Verifikasi sesi user saat app load */}
             <AuthHydrator />
 
-            {children}
-
             {/* Toast notifikasi — posisi bottom-center untuk mobile */}
             <Toaster
                 position="top-right"
@@ -81,6 +79,8 @@ export function Providers({ children }: ProvidersProps) {
                 }}
                 richColors
             />
+
+            {children}
         </QueryClientProvider>
     );
 }

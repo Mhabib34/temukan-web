@@ -4,6 +4,7 @@ import { getMe, login, logout, register } from "@/api";
 import { queryKeys } from "@/lib/queryClient";
 import { useAuthStore } from "@/store";
 import type { LoginRequest, RegisterRequest } from "@/types";
+import {showSuccess} from "@/lib/sonner";
 
 // ─── useMe ────────────────────────────────────────────────────────────────────
 // Ambil profil user yang sedang login.
@@ -40,6 +41,7 @@ export function useLogin() {
             setUser(res.data.user);
             queryClient.setQueryData(queryKeys.me, res.data.user);
             router.push("/laporan/saya");
+            showSuccess("Login berhasil!");
         },
     });
 }
@@ -56,7 +58,8 @@ export function useRegister() {
         onSuccess: (res) => {
             setUser(res.data.user);
             queryClient.setQueryData(queryKeys.me, res.data.user);
-            router.push("/laporan/saya");
+            router.push("/login");
+            showSuccess("Registrasi berhasil!");
         },
     });
 }
@@ -73,13 +76,13 @@ export function useLogout() {
         onSuccess: () => {
             clearUser();
             queryClient.clear(); // hapus semua cache
-            router.push("/masuk");
+            router.push("/login");
         },
         // Tetap clear state lokal meski API gagal
         onError: () => {
             clearUser();
             queryClient.clear();
-            router.push("/masuk");
+            router.push("/login");
         },
     });
 }

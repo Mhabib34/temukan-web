@@ -27,7 +27,7 @@ api.interceptors.request.use(
 
 // ─── Response Interceptor ─────────────────────────────────────────────────────
 // Tangani 401 → coba refresh token sekali, lalu retry request asli.
-// Kalau refresh juga gagal → redirect ke /masuk.
+// Kalau refresh juga gagal → redirect ke /login.
 
 let isRefreshing = false;
 let failedQueue: Array<{
@@ -81,7 +81,7 @@ api.interceptors.response.use(
 
             // Refresh gagal → paksa logout & redirect ke halaman masuk
             if (typeof window !== "undefined") {
-                window.location.href = "/masuk";
+                window.location.href = "/login";
             }
 
             return Promise.reject(refreshError);
