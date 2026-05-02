@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 const PROTECTED_ROUTES = [
     "/report/new",
     "/report/me",
-    "/notifikasi",
+    "/notification",
     "/match",
     "/profil",
 ];

@@ -166,7 +166,7 @@ export function Navbar() {
                         <>
                             {/* Notif bell */}
                             <Link
-                                href="/notifikasi"
+                                href="/notification"
                                 className="relative flex h-9 w-9 items-center justify-center rounded-full text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700"
                                 aria-label="Notifikasi"
                             >

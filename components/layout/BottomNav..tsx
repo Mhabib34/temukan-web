@@ -36,7 +36,7 @@ const TABS: Tab[] = [
     },
     {
         label: "Notifikasi",
-        href: "/notifikasi",
+        href: "/notification",
         icon: <Bell size={22} strokeWidth={1.8} />,
         protected: true,
     },
