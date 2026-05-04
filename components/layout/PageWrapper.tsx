@@ -1,17 +1,9 @@
 import { Navbar } from "@/components/layout/Navbar";
-import {BottomNav} from "@/components/layout/BottomNav.";
-
-// ─── PageWrapper ──────────────────────────────────────────────────────────────
-// Shell utama untuk semua halaman (kecuali auth).
-// - Desktop: Navbar di atas, konten di bawah
-// - Mobile: BottomNav di bawah, konten di atas dengan padding-bottom agar
-//   tidak tertutup BottomNav
+import { BottomNav } from "@/components/layout/BottomNav.";
 
 interface PageWrapperProps {
     children: React.ReactNode;
-    /** Tambahkan max-width container (default: true) */
     contained?: boolean;
-    /** Padding horizontal (default: true) */
     padded?: boolean;
 }
 
@@ -21,16 +13,18 @@ export function PageWrapper({
                                 padded = true,
                             }: PageWrapperProps) {
     return (
-        <div className="flex min-h-screen flex-col bg-stone-50">
+        <div className="flex min-h-screen flex-col bg-stone-50 overflow-x-hidden">
             <Navbar />
 
             <main
                 className={[
                     "flex-1",
-                    // Padding bawah untuk BottomNav di mobile
-                    "pb-20 md:pb-0",
-                    contained ? "mx-auto w-full max-w-6xl" : "w-full",
-                    padded ? "px-4 py-5 md:px-6 md:py-8" : "",
+                    // Desktop: offset sidebar kiri (w-16) dan topbar (h-14)
+                    "md:ml-16 md:mt-14",
+                    // Mobile: offset top bar (h-12) dan BottomNav
+                    "mt-12 md:mt-0 pb-20 md:pb-0",
+                    contained ? "mx-auto w-full max-w-6xl md:mx-0 md:w-auto" : "w-full",
+                    padded ? "px-4 py-5 md:px-8 md:py-8" : "",
                 ].join(" ")}
             >
                 {children}
@@ -40,10 +34,3 @@ export function PageWrapper({
         </div>
     );
 }
-
-// ─── Usage ────────────────────────────────────────────────────────────────────
-// Halaman normal:
-//   <PageWrapper>...</PageWrapper>
-//
-// Halaman fullscreen (peta, dsb):
-//   <PageWrapper contained={false} padded={false}>...</PageWrapper>
