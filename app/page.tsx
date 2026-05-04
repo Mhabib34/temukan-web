@@ -45,6 +45,7 @@ function StepCard({ step, title, desc, isLast = false }: {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 export default function HomePage() {
+    const currentYear = new Date().getFullYear();
     const { data, isLoading } = useLaporanList({ limit: 3, status: "active" });
 
     const laporanTerbaru = data?.data.reports ?? [];
@@ -292,7 +293,7 @@ export default function HomePage() {
             {/* ══ FOOTER ══ */}
             <footer className="border-t border-stone-200 bg-white px-4 md:px-10 py-5">
                 <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <p className="text-xs text-stone-400">© 2024 TemuKan Indonesia. Bersama Memulangkan yang Terpisah.</p>
+                    <p className="text-xs text-stone-400">&copy;{currentYear}{" "} TemuKan Indonesia. Bersama Memulangkan yang Terpisah.</p>
                     <div className="flex items-center gap-5">
                         {["Kebijakan Privasi", "Syarat & Ketentuan", "Hubungi Kami"].map(item => (
                             <a key={item} href="#" className="text-xs text-stone-400 hover:text-stone-600 transition-colors">{item}</a>

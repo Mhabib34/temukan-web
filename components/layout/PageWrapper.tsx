@@ -23,7 +23,7 @@ export function PageWrapper({
                     "md:ml-16 md:mt-14",
                     // Mobile: offset top bar (h-12) dan BottomNav
                     "mt-12 md:mt-0 pb-20 md:pb-0",
-                    contained ? "mx-auto w-full max-w-6xl md:mx-0 md:w-auto" : "w-full",
+                    contained ? "w-full" : "w-full",
                     padded ? "px-4 py-5 md:px-8 md:py-8" : "",
                 ].join(" ")}
             >

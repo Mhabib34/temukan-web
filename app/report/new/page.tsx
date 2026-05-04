@@ -4,72 +4,56 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, MapPin, FileText, Check, ChevronRight, ChevronLeft, Upload, X, ImageIcon } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, X, ImageIcon, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useCreateLaporan, useUploadFoto } from "@/hooks";
+import { useCreateLaporan } from "@/hooks";
 import { PROVINSI_INDONESIA } from "@/lib/province";
 import {
-    laporanStep1Schema,  laporanStep2Schema, laporanStep3Schema,
+    laporanStep1Schema, laporanStep2Schema, laporanStep3Schema,
     type LaporanStep1Values, type LaporanStep2Values, type LaporanStep3Values,
 } from "@/schemas/reportSchema";
 import { uploadFotoLaporan } from "@/api";
 import type { CreateReportRequest } from "@/types";
 
-// LocationPicker — SSR disabled (Leaflet)
 const LocationPicker = dynamic(
     () => import("@/components/report/LocationPicker"),
-    { ssr: false, loading: () => <div className="h-[280px] w-full animate-pulse rounded-xl bg-stone-100" /> }
+    { ssr: false, loading: () => <div className="h-[280px] w-full animate-pulse rounded-2xl bg-stone-100" /> }
 );
 
-// ─── Konstanta ────────────────────────────────────────────────────────────────
-
+// ─── Step config ──────────────────────────────────────────────────────────────
 const STEPS = [
-    { label: "Jenis", icon: FileText },
-    { label: "Detail", icon: User },
-    { label: "Lokasi", icon: MapPin },
+    { label: "Jenis & Identitas" },
+    { label: "Lokasi" },
+    { label: "Foto & Review" },
 ] as const;
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
+// ─── Step Indicator ───────────────────────────────────────────────────────────
 function StepIndicator({ current }: { current: number }) {
     return (
-        <div className="flex items-center justify-center gap-0">
+        <div className="flex items-center justify-center gap-0 mb-8">
             {STEPS.map((step, i) => {
-                const Icon = step.icon;
                 const done = i < current;
                 const active = i === current;
                 return (
                     <div key={i} className="flex items-center">
-                        <div className="flex flex-col items-center gap-1">
-                            <div
-                                className={[
-                                    "flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all",
-                                    done
-                                        ? "border-orange-500 bg-orange-500 text-white"
-                                        : active
-                                            ? "border-orange-500 bg-white text-orange-500"
-                                            : "border-stone-200 bg-white text-stone-400",
-                                ].join(" ")}
-                            >
-                                {done ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
-                            </div>
-                            <span
-                                className={[
-                                    "text-xs font-medium",
-                                    active ? "text-orange-600" : done ? "text-orange-400" : "text-stone-400",
-                                ].join(" ")}
-                            >
+                        <div className="flex flex-col items-center gap-1.5">
+                            <div className={[
+                                "w-3 h-3 rounded-full transition-all",
+                                done ? "bg-orange-500" : active ? "bg-orange-500" : "bg-stone-200",
+                            ].join(" ")} />
+                            <span className={[
+                                "text-xs font-medium whitespace-nowrap",
+                                active ? "text-orange-500 font-semibold" : done ? "text-stone-400" : "text-stone-300",
+                            ].join(" ")}>
                                 {step.label}
                             </span>
                         </div>
                         {i < STEPS.length - 1 && (
-                            <div
-                                className={[
-                                    "mb-5 h-0.5 w-12 transition-all sm:w-20",
-                                    done ? "bg-orange-400" : "bg-stone-200",
-                                ].join(" ")}
-                            />
+                            <div className={[
+                                "w-20 sm:w-32 h-px mb-5 mx-1 transition-all",
+                                done ? "bg-orange-400" : "bg-stone-200",
+                            ].join(" ")} />
                         )}
                     </div>
                 );
@@ -78,507 +62,486 @@ function StepIndicator({ current }: { current: number }) {
     );
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 function FieldError({ msg }: { msg?: string }) {
     if (!msg) return null;
-    return <p className="mt-1 text-xs text-red-500">{msg}</p>;
+    return <p className="mt-1.5 text-xs text-red-500">{msg}</p>;
 }
 
-function Label({ children, required }: { children: React.ReactNode; required?: boolean }) {
+function SectionTitle({ children }: { children: React.ReactNode }) {
     return (
-        <label className="mb-1.5 block text-sm font-medium text-stone-700">
-            {children}
-            {required && <span className="ml-0.5 text-red-500">*</span>}
-        </label>
+        <div className="flex items-center gap-2 mb-4">
+            <div className="w-0.5 h-4 bg-orange-500 rounded-full" />
+            <p className="text-sm font-semibold text-stone-700">{children}</p>
+        </div>
     );
 }
 
 function inputCls(hasError?: boolean) {
     return [
-        "w-full rounded-xl border px-3.5 py-2.5 text-sm text-stone-800 outline-none transition",
+        "w-full rounded-xl border px-4 py-3 text-sm text-stone-800 outline-none transition bg-white",
         "placeholder:text-stone-300",
         hasError
             ? "border-red-300 bg-red-50 focus:border-red-400 focus:ring-2 focus:ring-red-100"
-            : "border-stone-200 bg-white focus:border-orange-400 focus:ring-2 focus:ring-orange-100",
+            : "border-stone-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-100",
     ].join(" ");
 }
 
-// ─── Step 1: Pilih Tipe ───────────────────────────────────────────────────────
-
-function Step1Form({
-                       defaultValues,
-                       onNext,
-                   }: {
-    defaultValues: Partial<LaporanStep1Values>;
-    onNext: (data: LaporanStep1Values) => void;
+// ─── Step 1: Jenis + Identitas ────────────────────────────────────────────────
+function Step1Form({ defaultValues, onNext }: {
+    defaultValues: Partial<LaporanStep1Values & LaporanStep2Values>;
+    onNext: (s1: LaporanStep1Values, s2: LaporanStep2Values) => void;
 }) {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<LaporanStep1Values>({
+    // Two forms merged into one step visually
+    const form1 = useForm<LaporanStep1Values>({
         resolver: zodResolver(laporanStep1Schema),
-        defaultValues,
+        defaultValues: { type: (defaultValues as any).type },
     });
-    const selected = watch("type");
+    const form2 = useForm<LaporanStep2Values>({
+        resolver: zodResolver(laporanStep2Schema),
+        defaultValues: defaultValues as any,
+    });
+
+    const selectedType = form1.watch("type");
+
+    async function handleSubmit() {
+        const v1 = await form1.trigger();
+        const v2 = await form2.trigger();
+        if (!v1 || !v2) return;
+        const d1 = form1.getValues();
+        const d2 = form2.getValues();
+        onNext(d1, d2);
+    }
 
     return (
-        <form onSubmit={handleSubmit(onNext)} className="space-y-6">
+        <div className="space-y-8">
+            {/* Pilih Jenis */}
             <div>
-                <h2 className="mb-1 text-xl font-bold text-stone-900">Jenis Laporan</h2>
-                <p className="text-sm text-stone-500">Apa yang ingin kamu laporkan?</p>
+                <h2 className="text-lg font-bold text-stone-900 mb-1">Pilih Jenis Laporan</h2>
+                <p className="text-sm text-stone-400 mb-5">Bantu kami mengidentifikasi situasi yang Anda hadapi.</p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Found */}
+                    <label className={[
+                        "relative flex flex-col gap-3 p-5 rounded-2xl border-2 cursor-pointer transition-all",
+                        selectedType === "found"
+                            ? "border-orange-500 bg-white shadow-md shadow-orange-100"
+                            : "border-stone-200 bg-white hover:border-stone-300",
+                    ].join(" ")}>
+                        <input type="radio" value="found" {...form1.register("type")} className="sr-only" />
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${selectedType === "found" ? "bg-orange-50" : "bg-stone-100"}`}>
+                            {/* hands/found icon */}
+                            <svg className={`w-5 h-5 ${selectedType === "found" ? "text-orange-500" : "text-stone-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p className={`text-xs font-bold tracking-widest uppercase mb-1 ${selectedType === "found" ? "text-stone-900" : "text-stone-400"}`}>Menemukan</p>
+                            <p className={`text-xs leading-relaxed ${selectedType === "found" ? "text-stone-600" : "text-stone-400"}`}>
+                                Saya menemukan orang yang terlihat hilang atau butuh bantuan.
+                            </p>
+                        </div>
+                        {selectedType === "found" && (
+                            <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center">
+                                <div className="w-2 h-2 rounded-full bg-white" />
+                            </div>
+                        )}
+                        {selectedType !== "found" && (
+                            <div className="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-stone-300" />
+                        )}
+                    </label>
+
+                    {/* Missing */}
+                    <label className={[
+                        "relative flex flex-col gap-3 p-5 rounded-2xl border-2 cursor-pointer transition-all",
+                        selectedType === "missing"
+                            ? "border-orange-500 bg-white shadow-md shadow-orange-100"
+                            : "border-stone-200 bg-white hover:border-stone-300",
+                    ].join(" ")}>
+                        <input type="radio" value="missing" {...form1.register("type")} className="sr-only" />
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${selectedType === "missing" ? "bg-orange-50" : "bg-stone-100"}`}>
+                            <svg className={`w-5 h-5 ${selectedType === "missing" ? "text-orange-500" : "text-stone-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0015.803 15.803zM13.5 10.5h-6" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p className={`text-xs font-bold tracking-widest uppercase mb-1 ${selectedType === "missing" ? "text-stone-900" : "text-stone-400"}`}>Mencari</p>
+                            <p className={`text-xs leading-relaxed ${selectedType === "missing" ? "text-stone-600" : "text-stone-400"}`}>
+                                Saya sedang mencari anggota keluarga atau kerabat yang hilang.
+                            </p>
+                        </div>
+                        {selectedType === "missing" && (
+                            <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center">
+                                <div className="w-2 h-2 rounded-full bg-white" />
+                            </div>
+                        )}
+                        {selectedType !== "missing" && (
+                            <div className="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-stone-300" />
+                        )}
+                    </label>
+                </div>
+                <FieldError msg={form1.formState.errors.type?.message} />
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {/* Missing */}
-                <label
-                    className={[
-                        "relative flex cursor-pointer flex-col gap-3 rounded-2xl border-2 p-5 transition-all",
-                        selected === "missing"
-                            ? "border-orange-500 bg-orange-50 shadow-sm"
-                            : "border-stone-200 bg-white hover:border-stone-300",
-                    ].join(" ")}
-                >
+            {/* Identitas */}
+            <div className="bg-white rounded-2xl border border-stone-100 p-5 shadow-sm space-y-4">
+                <SectionTitle>Identitas Orang</SectionTitle>
+
+                {/* Nama */}
+                <div>
+                    <label className="block text-xs font-bold tracking-widest uppercase text-stone-500 mb-2">
+                        Nama Lengkap (Jika Diketahui)
+                    </label>
                     <input
-                        type="radio"
-                        value="missing"
-                        {...register("type")}
-                        className="sr-only"
+                        {...form2.register("name")}
+                        placeholder="Masukkan nama..."
+                        className={inputCls(!!form2.formState.errors.name)}
                     />
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-                        <User className="h-6 w-6 text-red-500" />
+                    <FieldError msg={form2.formState.errors.name?.message} />
+                </div>
+
+                {/* Gender + Usia */}
+                <div className="grid grid-cols-2 gap-3">
+                    <div>
+                        <label className="block text-xs font-bold tracking-widest uppercase text-stone-500 mb-2">
+                            Jenis Kelamin
+                        </label>
+                        <select
+                            {...form2.register("gender")}
+                            className={inputCls(!!form2.formState.errors.gender) + " cursor-pointer appearance-none"}
+                            defaultValue=""
+                        >
+                            <option value="" disabled>Pilih...</option>
+                            <option value="male">Laki-laki</option>
+                            <option value="female">Perempuan</option>
+                            <option value="unknown">Tidak Tahu</option>
+                        </select>
+                        <FieldError msg={form2.formState.errors.gender?.message} />
                     </div>
                     <div>
-                        <p className="font-semibold text-stone-900">Orang Hilang</p>
-                        <p className="mt-0.5 text-xs text-stone-500">
-                            Saya mencari seseorang yang hilang
-                        </p>
+                        <label className="block text-xs font-bold tracking-widest uppercase text-stone-500 mb-2">
+                            Estimasi Usia
+                        </label>
+                        <input
+                            type="number"
+                            min={0}
+                            max={120}
+                            {...form2.register("estimated_age", { valueAsNumber: true })}
+                            placeholder="Contoh: 25"
+                            className={inputCls(!!form2.formState.errors.estimated_age)}
+                        />
+                        <FieldError msg={form2.formState.errors.estimated_age?.message} />
                     </div>
-                    {selected === "missing" && (
-                        <div className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500">
-                            <Check className="h-3 w-3 text-white" />
-                        </div>
-                    )}
-                </label>
+                </div>
 
-                {/* Found */}
-                <label
-                    className={[
-                        "relative flex cursor-pointer flex-col gap-3 rounded-2xl border-2 p-5 transition-all",
-                        selected === "found"
-                            ? "border-orange-500 bg-orange-50 shadow-sm"
-                            : "border-stone-200 bg-white hover:border-stone-300",
-                    ].join(" ")}
-                >
-                    <input
-                        type="radio"
-                        value="found"
-                        {...register("type")}
-                        className="sr-only"
+                {/* Deskripsi */}
+                <div>
+                    <label className="block text-xs font-bold tracking-widest uppercase text-stone-500 mb-2">
+                        Ciri-ciri Fisik
+                    </label>
+                    <textarea
+                        {...form2.register("description")}
+                        rows={3}
+                        placeholder="Tanda lahir, pakaian terakhir, kondisi kesehatan..."
+                        className={inputCls(!!form2.formState.errors.description) + " resize-none"}
                     />
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                        <MapPin className="h-6 w-6 text-green-500" />
-                    </div>
-                    <div>
-                        <p className="font-semibold text-stone-900">Orang Ditemukan</p>
-                        <p className="mt-0.5 text-xs text-stone-500">
-                            Saya menemukan seseorang yang tersesat
-                        </p>
-                    </div>
-                    {selected === "found" && (
-                        <div className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500">
-                            <Check className="h-3 w-3 text-white" />
-                        </div>
-                    )}
-                </label>
+                    <FieldError msg={form2.formState.errors.description?.message} />
+                </div>
             </div>
 
-            <FieldError msg={errors.type?.message} />
-
-            <div className="flex justify-end">
-                <button
-                    type="submit"
-                    className="flex items-center gap-2 rounded-xl bg-orange-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 active:scale-95"
-                >
-                    Lanjut
-                    <ChevronRight className="h-4 w-4" />
-                </button>
+            {/* Lokasi preview — locked */}
+            <div className="bg-white rounded-2xl border border-stone-100 p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-1">
+                    <SectionTitle>Lokasi Terakhir</SectionTitle>
+                    <Lock size={14} className="text-stone-300 mb-4" />
+                </div>
+                <div className="h-28 rounded-xl bg-stone-100 flex items-center justify-center">
+                    <div className="text-center">
+                        <p className="text-xs text-stone-400 font-medium">Buka pada Langkah 2</p>
+                    </div>
+                </div>
             </div>
-        </form>
+
+            {/* Next button */}
+            <button
+                type="button"
+                onClick={handleSubmit}
+                className="w-full h-12 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-all active:scale-95 shadow-md shadow-orange-200 flex items-center justify-center gap-2"
+            >
+                Lanjut ke Lokasi
+                <ChevronRight size={16} />
+            </button>
+            <p className="text-center text-xs text-stone-400">Langkah 1 dari 3</p>
+        </div>
     );
 }
 
-// ─── Step 2: Detail Orang ─────────────────────────────────────────────────────
-
-function Step2Form({
-                       defaultValues,
-                       onNext,
-                       onBack,
-                   }: {
-    defaultValues: Partial<LaporanStep2Values>;
-    onNext: (data: LaporanStep2Values) => void;
+// ─── Step 2: Lokasi ───────────────────────────────────────────────────────────
+function Step2Form({ defaultValues, coords, onCoordsChange, onNext, onBack }: {
+    defaultValues: Partial<LaporanStep3Values>;
+    coords: { lat: number; lng: number } | null;
+    onCoordsChange: (c: { lat: number; lng: number } | null) => void;
+    onNext: (data: LaporanStep3Values) => void;
     onBack: () => void;
 }) {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<LaporanStep2Values>({
-        resolver: zodResolver(laporanStep2Schema),
+    const { register, handleSubmit, formState: { errors } } = useForm<LaporanStep3Values>({
+        resolver: zodResolver(laporanStep3Schema),
         defaultValues,
     });
 
     return (
         <form onSubmit={handleSubmit(onNext)} className="space-y-5">
             <div>
-                <h2 className="mb-1 text-xl font-bold text-stone-900">Detail Orang</h2>
-                <p className="text-sm text-stone-500">Isi informasi sedetail mungkin</p>
+                <h2 className="text-lg font-bold text-stone-900 mb-1">Lokasi Terakhir</h2>
+                <p className="text-sm text-stone-400 mb-5">Di mana orang tersebut terakhir terlihat?</p>
             </div>
 
-            {/* Nama */}
-            <div>
-                <Label>Nama</Label>
-                <input
-                    {...register("name")}
-                    placeholder="Kosongkan jika tidak diketahui"
-                    className={inputCls(!!errors.name)}
-                />
-                <FieldError msg={errors.name?.message} />
-            </div>
+            <div className="bg-white rounded-2xl border border-stone-100 p-5 shadow-sm space-y-4">
+                <SectionTitle>Detail Lokasi</SectionTitle>
 
-            {/* Gender */}
-            <div>
-                <Label required>Jenis Kelamin</Label>
-                <div className="grid grid-cols-3 gap-2">
-                    {(["male", "female", "unknown"] as const).map((g) => (
-                        <label key={g} className="relative cursor-pointer">
-                            <input type="radio" value={g} {...register("gender")} className="peer sr-only" />
-                            <div className="rounded-xl border-2 border-stone-200 bg-white p-3 text-center text-sm font-medium text-stone-600 transition peer-checked:border-orange-500 peer-checked:bg-orange-50 peer-checked:text-orange-700 hover:border-stone-300">
-                                {g === "male" ? "Laki-laki" : g === "female" ? "Perempuan" : "Tidak Tahu"}
-                            </div>
-                        </label>
-                    ))}
-                </div>
-                <FieldError msg={errors.gender?.message} />
-            </div>
-
-            {/* Usia */}
-            <div>
-                <Label required>Perkiraan Usia</Label>
-                <div className="relative">
+                <div>
+                    <label className="block text-xs font-bold tracking-widest uppercase text-stone-500 mb-2">
+                        Alamat / Deskripsi Lokasi
+                    </label>
                     <input
-                        type="number"
-                        min={0}
-                        max={120}
-                        {...register("estimated_age", { valueAsNumber: true })}
-                        placeholder="Contoh: 65"
-                        className={inputCls(!!errors.estimated_age)}
+                        {...register("last_seen_location")}
+                        placeholder="Contoh: Depan Pasar Petisah, Jalan Pegadaian"
+                        className={inputCls(!!errors.last_seen_location)}
                     />
-                    <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-sm text-stone-400">
-                        tahun
-                    </span>
+                    <FieldError msg={errors.last_seen_location?.message} />
                 </div>
-                <FieldError msg={errors.estimated_age?.message} />
+
+                <div className="grid grid-cols-2 gap-3">
+                    <div>
+                        <label className="block text-xs font-bold tracking-widest uppercase text-stone-500 mb-2">Kota</label>
+                        <input
+                            {...register("city")}
+                            placeholder="Medan"
+                            className={inputCls(!!errors.city)}
+                        />
+                        <FieldError msg={errors.city?.message} />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold tracking-widest uppercase text-stone-500 mb-2">Provinsi</label>
+                        <select
+                            {...register("province")}
+                            defaultValue=""
+                            className={inputCls(!!errors.province) + " cursor-pointer"}
+                        >
+                            <option value="" disabled>Pilih...</option>
+                            {PROVINSI_INDONESIA.map((p) => (
+                                <option key={p} value={p}>{p}</option>
+                            ))}
+                        </select>
+                        <FieldError msg={errors.province?.message} />
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold tracking-widest uppercase text-stone-500 mb-2">
+                        Tandai di Peta <span className="normal-case font-normal text-stone-300">(opsional)</span>
+                    </label>
+                    <LocationPicker value={coords} onChange={onCoordsChange} />
+                </div>
             </div>
 
-            {/* Deskripsi */}
-            <div>
-                <Label required>Deskripsi</Label>
-                <textarea
-                    {...register("description")}
-                    rows={4}
-                    placeholder="Ciri fisik, pakaian terakhir, kondisi kesehatan, atau info penting lainnya..."
-                    className={inputCls(!!errors.description) + " resize-none"}
-                />
-                <FieldError msg={errors.description?.message} />
-            </div>
+            <button
+                type="submit"
+                className="w-full h-12 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-all active:scale-95 shadow-md shadow-orange-200 flex items-center justify-center gap-2"
+            >
+                Lanjut ke Review
+                <ChevronRight size={16} />
+            </button>
 
-            <div className="flex gap-3">
-                <button
-                    type="button"
-                    onClick={onBack}
-                    className="flex items-center gap-1.5 rounded-xl border border-stone-200 px-5 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50"
-                >
-                    <ChevronLeft className="h-4 w-4" />
-                    Kembali
-                </button>
-                <button
-                    type="submit"
-                    className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-orange-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 active:scale-95"
-                >
-                    Lanjut
-                    <ChevronRight className="h-4 w-4" />
-                </button>
-            </div>
+            <button type="button" onClick={onBack}
+                    className="w-full h-10 rounded-2xl border border-stone-200 text-stone-500 text-sm font-medium hover:bg-stone-50 transition-all flex items-center justify-center gap-1.5">
+                <ChevronLeft size={14} /> Kembali
+            </button>
+            <p className="text-center text-xs text-stone-400">Langkah 2 dari 3</p>
         </form>
     );
 }
 
-// ─── Step 3: Lokasi + Foto ────────────────────────────────────────────────────
-
-function Step3Form({
-                       defaultValues,
-                       coords,
-                       onCoordsChange,
-                       fotoFile,
-                       onFotoChange,
-                       onSubmit,
-                       onBack,
-                       isLoading,
-                   }: {
-    defaultValues: Partial<LaporanStep3Values>;
+// ─── Step 3: Foto + Review ────────────────────────────────────────────────────
+function Step3Form({ step1, step2, step3, coords, fotoFile, onFotoChange, onSubmit, onBack, isLoading }: {
+    step1: Partial<LaporanStep1Values>;
+    step2: Partial<LaporanStep2Values>;
+    step3: Partial<LaporanStep3Values>;
     coords: { lat: number; lng: number } | null;
-    onCoordsChange: (c: { lat: number; lng: number } | null) => void;
     fotoFile: File | null;
     onFotoChange: (f: File | null) => void;
-    onSubmit: (data: LaporanStep3Values) => void;
+    onSubmit: () => void;
     onBack: () => void;
     isLoading: boolean;
 }) {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<LaporanStep3Values>({
-        resolver: zodResolver(laporanStep3Schema),
-        defaultValues,
-    });
-
     function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
         if (!file) return;
-        if (file.size > 5 * 1024 * 1024) {
-            toast.error("Ukuran foto maksimal 5MB");
-            return;
-        }
+        if (file.size > 5 * 1024 * 1024) { toast.error("Ukuran foto maksimal 5MB"); return; }
         onFotoChange(file);
     }
-
     const fotoPreview = fotoFile ? URL.createObjectURL(fotoFile) : null;
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div className="space-y-5">
             <div>
-                <h2 className="mb-1 text-xl font-bold text-stone-900">Lokasi & Foto</h2>
-                <p className="text-sm text-stone-500">Di mana terakhir terlihat?</p>
-            </div>
-
-            {/* Lokasi teks */}
-            <div>
-                <Label required>Lokasi Terakhir Terlihat</Label>
-                <input
-                    {...register("last_seen_location")}
-                    placeholder="Contoh: Depan Pasar Petisah, Jalan Pegadaian"
-                    className={inputCls(!!errors.last_seen_location)}
-                />
-                <FieldError msg={errors.last_seen_location?.message} />
-            </div>
-
-            {/* Kota & Provinsi */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <Label required>Kota</Label>
-                    <input
-                        {...register("city")}
-                        placeholder="Contoh: Medan"
-                        className={inputCls(!!errors.city)}
-                    />
-                    <FieldError msg={errors.city?.message} />
-                </div>
-                <div>
-                    <Label required>Provinsi</Label>
-                    <select
-                        {...register("province")}
-                        className={inputCls(!!errors.province) + " cursor-pointer"}
-                        defaultValue=""
-                    >
-                        <option value="" disabled>Pilih provinsi…</option>
-                        {PROVINSI_INDONESIA.map((p) => (
-                            <option key={p} value={p}>{p}</option>
-                        ))}
-                    </select>
-                    <FieldError msg={errors.province?.message} />
-                </div>
-            </div>
-
-            {/* Picker peta */}
-            <div>
-                <Label>Tandai di Peta <span className="text-xs font-normal text-stone-400">(opsional)</span></Label>
-                <LocationPicker value={coords} onChange={onCoordsChange} />
+                <h2 className="text-lg font-bold text-stone-900 mb-1">Foto & Review</h2>
+                <p className="text-sm text-stone-400 mb-5">Upload foto dan periksa kembali data laporan.</p>
             </div>
 
             {/* Upload foto */}
-            <div>
-                <Label>Foto <span className="text-xs font-normal text-stone-400">(opsional, maks 5MB)</span></Label>
-
+            <div className="bg-white rounded-2xl border border-stone-100 p-5 shadow-sm">
+                <SectionTitle>Foto Terbaru</SectionTitle>
                 {fotoPreview ? (
                     <div className="relative w-full overflow-hidden rounded-xl border border-stone-200">
-                        <img
-                            src={fotoPreview}
-                            alt="Preview foto"
-                            className="h-48 w-full object-cover"
-                        />
-                        <button
-                            type="button"
-                            onClick={() => onFotoChange(null)}
-                            className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-black/80"
-                        >
-                            <X className="h-3.5 w-3.5" />
+                        <img src={fotoPreview} alt="Preview" className="h-52 w-full object-cover" />
+                        <button type="button" onClick={() => onFotoChange(null)}
+                                className="absolute right-2 top-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors">
+                            <X size={13} />
                         </button>
                     </div>
                 ) : (
-                    <label className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-stone-200 bg-stone-50 py-8 transition hover:border-orange-300 hover:bg-orange-50">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-100">
-                            <ImageIcon className="h-5 w-5 text-stone-400" />
+                    <label className="flex flex-col items-center justify-center gap-2.5 w-full py-10 rounded-2xl border-2 border-dashed border-stone-200 bg-stone-50 cursor-pointer hover:border-orange-300 hover:bg-orange-50 transition-all">
+                        <div className="w-12 h-12 rounded-2xl bg-stone-100 flex items-center justify-center">
+                            <ImageIcon size={22} className="text-stone-400" />
                         </div>
-                        <span className="text-sm text-stone-500">
-                            Klik untuk pilih foto
-                        </span>
-                        <span className="text-xs text-stone-400">JPG, PNG, WEBP</span>
-                        <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp"
-                            className="sr-only"
-                            onChange={handleFileChange}
-                        />
+                        <div className="text-center">
+                            <p className="text-sm font-medium text-stone-600">Unggah Foto Terbaru</p>
+                            <p className="text-xs text-stone-400 mt-0.5">Maks. 5MB (JPG, PNG)</p>
+                        </div>
+                        <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={handleFileChange} />
                     </label>
                 )}
             </div>
 
-            <div className="flex gap-3">
-                <button
-                    type="button"
-                    onClick={onBack}
-                    disabled={isLoading}
-                    className="flex items-center gap-1.5 rounded-xl border border-stone-200 px-5 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50 disabled:opacity-50"
-                >
-                    <ChevronLeft className="h-4 w-4" />
-                    Kembali
-                </button>
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-orange-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 active:scale-95 disabled:opacity-60"
-                >
-                    {isLoading ? (
-                        <>
-                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                            Menyimpan…
-                        </>
-                    ) : (
-                        <>
-                            <Upload className="h-4 w-4" />
-                            Buat Laporan
-                        </>
-                    )}
-                </button>
+            {/* Review summary */}
+            <div className="bg-white rounded-2xl border border-stone-100 p-5 shadow-sm space-y-3">
+                <SectionTitle>Ringkasan Laporan</SectionTitle>
+                {[
+                    { label: "Jenis", value: step1.type === "found" ? "Menemukan" : "Mencari" },
+                    { label: "Nama", value: step2.name || "Tidak diketahui" },
+                    { label: "Jenis Kelamin", value: step2.gender === "male" ? "Laki-laki" : step2.gender === "female" ? "Perempuan" : "Tidak diketahui" },
+                    { label: "Usia", value: step2.estimated_age ? `${step2.estimated_age} tahun` : "-" },
+                    { label: "Lokasi", value: step3.last_seen_location || "-" },
+                    { label: "Kota", value: step3.city ? `${step3.city}, ${step3.province}` : "-" },
+                    { label: "Koordinat", value: coords ? `${coords.lat}, ${coords.lng}` : "Tidak ditandai" },
+                ].map(({ label, value }) => (
+                    <div key={label} className="flex items-start justify-between gap-4 py-2 border-b border-stone-50 last:border-0">
+                        <span className="text-xs text-stone-400 font-medium flex-shrink-0">{label}</span>
+                        <span className="text-xs text-stone-700 font-semibold text-right">{value}</span>
+                    </div>
+                ))}
             </div>
-        </form>
+
+            <button type="button" onClick={onSubmit} disabled={isLoading}
+                    className="w-full h-12 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-all active:scale-95 shadow-md shadow-orange-200 flex items-center justify-center gap-2 disabled:opacity-60">
+                {isLoading ? (
+                    <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Menyimpan...</>
+                ) : "Buat Laporan"}
+            </button>
+
+            <button type="button" onClick={onBack} disabled={isLoading}
+                    className="w-full h-10 rounded-2xl border border-stone-200 text-stone-500 text-sm font-medium hover:bg-stone-50 transition-all flex items-center justify-center gap-1.5 disabled:opacity-50">
+                <ChevronLeft size={14} /> Kembali
+            </button>
+            <p className="text-center text-xs text-stone-400">Langkah 3 dari 3</p>
+        </div>
     );
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-
 export default function NewReportPage() {
     const [step, setStep] = useState(0);
-
-    // Kumpulkan data per step
     const [step1Data, setStep1Data] = useState<Partial<LaporanStep1Values>>({});
     const [step2Data, setStep2Data] = useState<Partial<LaporanStep2Values>>({});
     const [step3Data, setStep3Data] = useState<Partial<LaporanStep3Values>>({});
-
-    // Koordinat & foto dikelola terpisah (tidak masuk RHF)
     const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
     const [fotoFile, setFotoFile] = useState<File | null>(null);
 
     const createMutation = useCreateLaporan();
 
-    // ── Handlers per step ──
-
-    function handleStep1(data: LaporanStep1Values) {
-        setStep1Data(data);
+    function handleStep1(s1: LaporanStep1Values, s2: LaporanStep2Values) {
+        setStep1Data(s1);
+        setStep2Data(s2);
         setStep(1);
     }
 
-    function handleStep2(data: LaporanStep2Values) {
-        setStep2Data(data);
+    function handleStep2(data: LaporanStep3Values) {
+        setStep3Data(data);
         setStep(2);
     }
 
-    async function handleStep3(data: LaporanStep3Values) {
+    async function handleFinalSubmit() {
         const payload: CreateReportRequest = {
             type: step1Data.type!,
             name: step2Data.name || null,
             gender: step2Data.gender!,
             estimated_age: step2Data.estimated_age!,
             description: step2Data.description!,
-            last_seen_location: data.last_seen_location,
-            city: data.city,
-            province: data.province,
+            last_seen_location: step3Data.last_seen_location!,
+            city: step3Data.city!,
+            province: step3Data.province!,
             latitude: coords?.lat ?? null,
             longitude: coords?.lng ?? null,
         };
 
         createMutation.mutate(payload, {
             onSuccess: async (res) => {
-                const reportId = res.data.id;
                 if (fotoFile) {
                     try {
-                        await uploadFotoLaporan(reportId, fotoFile); // ← langsung pakai reportId
+                        await uploadFotoLaporan(res.data.id, fotoFile);
                     } catch {
-                        toast.warning("Laporan dibuat, tapi foto gagal diupload. Coba upload ulang dari halaman edit.");
+                        toast.warning("Laporan dibuat, tapi foto gagal diupload.");
                     }
                 }
-                // redirect tetap ditangani useCreateLaporan onSuccess
             },
-            //eslint-disable-next-line
             onError: (err: any) => {
                 toast.error(err?.response?.data?.message ?? err.message ?? "Gagal membuat laporan");
             },
         });
     }
 
-    const isLoading = createMutation.isPending;
-
     return (
         <PageWrapper>
-            <div className="mx-auto max-w-xl">
+            <div className="mx-auto max-w-xl w-full">
                 {/* Header */}
                 <div className="mb-6">
                     <h1 className="text-2xl font-bold text-stone-900">Buat Laporan</h1>
-                    <p className="mt-1 text-sm text-stone-500">
-                        Langkah {step + 1} dari {STEPS.length}
-                    </p>
+                    <p className="text-sm text-stone-400 mt-0.5">Langkah {step + 1} dari {STEPS.length}</p>
                 </div>
 
                 {/* Step indicator */}
-                <div className="mb-8">
-                    <StepIndicator current={step} />
-                </div>
+                <StepIndicator current={step} />
 
-                {/* Form card */}
-                <div className="rounded-2xl border border-stone-100 bg-white p-5 shadow-sm md:p-6">
-                    {step === 0 && (
-                        <Step1Form
-                            defaultValues={step1Data}
-                            onNext={handleStep1}
-                        />
-                    )}
-                    {step === 1 && (
-                        <Step2Form
-                            defaultValues={step2Data}
-                            onNext={handleStep2}
-                            onBack={() => setStep(0)}
-                        />
-                    )}
-                    {step === 2 && (
-                        <Step3Form
-                            defaultValues={step3Data}
-                            coords={coords}
-                            onCoordsChange={setCoords}
-                            fotoFile={fotoFile}
-                            onFotoChange={setFotoFile}
-                            onSubmit={handleStep3}
-                            onBack={() => setStep(1)}
-                            isLoading={isLoading}
-                        />
-                    )}
-                </div>
+                {/* Forms */}
+                {step === 0 && (
+                    <Step1Form
+                        defaultValues={{ ...step1Data, ...step2Data }}
+                        onNext={handleStep1}
+                    />
+                )}
+                {step === 1 && (
+                    <Step2Form
+                        defaultValues={step3Data}
+                        coords={coords}
+                        onCoordsChange={setCoords}
+                        onNext={handleStep2}
+                        onBack={() => setStep(0)}
+                    />
+                )}
+                {step === 2 && (
+                    <Step3Form
+                        step1={step1Data}
+                        step2={step2Data}
+                        step3={step3Data}
+                        coords={coords}
+                        fotoFile={fotoFile}
+                        onFotoChange={setFotoFile}
+                        onSubmit={handleFinalSubmit}
+                        onBack={() => setStep(1)}
+                        isLoading={createMutation.isPending}
+                    />
+                )}
             </div>
         </PageWrapper>
     );
