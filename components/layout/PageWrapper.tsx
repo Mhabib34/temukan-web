@@ -13,14 +13,15 @@ export function PageWrapper({
                                 padded = true,
                             }: PageWrapperProps) {
     return (
-        <div className="flex min-h-screen flex-col bg-stone-50 overflow-x-hidden">
+        <div className="flex min-h-screen flex-col bg-white overflow-x-hidden">
             <Navbar />
 
             <main
                 className={[
                     "flex-1",
+                    "max-w-6xl mx-auto",
                     // Desktop: offset sidebar kiri (w-16) dan topbar (h-14)
-                    "md:ml-16 md:mt-14",
+                    "md:mt-14",
                     // Mobile: offset top bar (h-12) dan BottomNav
                     "mt-12 md:mt-0 pb-20 md:pb-0",
                     contained ? "w-full" : "w-full",

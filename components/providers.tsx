@@ -33,28 +33,25 @@ function makeQueryClient() {
 //
 // Ini dilakukan sekali saja di mount (bukan setiap render).
 
+// providers.tsx
 function AuthHydrator() {
-    const { isLoggedIn, setUser, clearUser } = useAuthStore();
+    const { setUser, clearUser, setHydrated } = useAuthStore();
     const hasFetched = useRef(false);
 
     useEffect(() => {
-        // Hanya jalankan jika store bilang user sudah login
-        // (artinya ada data di localStorage dari sesi sebelumnya)
-        if (!isLoggedIn || hasFetched.current) return;
-
+        if (hasFetched.current) return;
         hasFetched.current = true;
 
+        // Langsung cek ke backend — jangan lihat flag localStorage
+        // Cookie httpOnly yang jadi sumber kebenaran, bukan isLoggedIn
         getMe()
             .then((user) => setUser(user))
-            .catch(() => {
-                // Cookie expired atau invalid → bersihkan store
-                clearUser();
-            });
-    }, [isLoggedIn, setUser, clearUser]);
+            .catch(() => clearUser()) // cookie expired/tidak ada → clear
+            .finally(() => setHydrated(true)); // UI boleh render sekarang
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return null;
 }
-
 // ─── Providers ────────────────────────────────────────────────────────────────
 
 interface ProvidersProps {

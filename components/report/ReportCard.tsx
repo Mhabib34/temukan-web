@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Calendar, User } from "lucide-react";
+import { MapPin, Clock, ArrowRight, Share2, User } from "lucide-react";
 import type { Report } from "@/types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -10,11 +10,11 @@ import type { Report } from "@/types";
 const TYPE_CONFIG = {
     missing: {
         label: "Hilang",
-        className: "bg-red-50 text-red-600 border border-red-100",
+        className: "bg-red-500 text-white",
     },
     found: {
         label: "Ditemukan",
-        className: "bg-emerald-50 text-emerald-600 border border-emerald-100",
+        className: "bg-emerald-500 text-white",
     },
 };
 
@@ -35,12 +35,14 @@ const GENDER_LABEL: Record<string, string> = {
     unknown: "Tidak diketahui",
 };
 
-function formatDate(iso: string) {
-    return new Intl.DateTimeFormat("id-ID", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-    }).format(new Date(iso));
+function formatTimeAgo(iso: string) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins} mnt lalu`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} jam lalu`;
+    const days = Math.floor(hours / 24);
+    return `${days} hari lalu`;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -56,63 +58,72 @@ export function ReportCard({ laporan }: ReportCardProps) {
     return (
         <Link
             href={`/report/${laporan.id}`}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+            className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm border border-stone-100 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
         >
             {/* Foto */}
-            <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
+            <div className="relative w-full overflow-hidden bg-stone-100" style={{ aspectRatio: "3/4" }}>
                 {laporan.photo_url ? (
                     <Image
                         src={laporan.photo_url}
                         alt={laporan.name ?? "Foto laporan"}
                         fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     />
                 ) : (
                     <div className="flex h-full items-center justify-center">
-                        <User size={40} className="text-stone-300" />
+                        <User size={48} className="text-stone-300" />
                     </div>
                 )}
 
-                {/* Type badge — overlay di foto */}
+                {/* Gradient overlay bawah */}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
+
+                {/* Type badge — atas kiri */}
                 <span
-                    className={`absolute left-2.5 top-2.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${typeConfig.className}`}
+                    className={`absolute left-2.5 top-2.5 rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wide uppercase ${typeConfig.className}`}
                 >
                     {typeConfig.label}
                 </span>
 
+                {/* Share button — atas kanan */}
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (navigator.share) {
+                            navigator.share({ title: laporan.name ?? "Laporan", url: `/report/${laporan.id}` });
+                        }
+                    }}
+                    className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-stone-600 backdrop-blur-sm transition hover:bg-white hover:text-orange-500"
+                    aria-label="Bagikan"
+                >
+                    <Share2 size={13} />
+                </button>
+
                 {/* Resolved overlay */}
                 {laporan.status === "resolved" && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-stone-900/40">
-                        <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-stone-600">
+                    <div className="absolute inset-0 flex items-center justify-center bg-stone-900/50">
+                        <span className="rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-stone-600">
                             ✓ Sudah Ditemukan
                         </span>
                     </div>
                 )}
+
+                {/* Nama & info — overlay bawah */}
+                <div className="absolute inset-x-0 bottom-0 p-3">
+                    <p className="text-sm font-bold text-white drop-shadow">
+                        {laporan.name ?? "Nama tidak diketahui"}
+                    </p>
+                    <p className="text-xs text-white/80">
+                        {GENDER_LABEL[laporan.gender]}
+                        {laporan.estimated_age ? ` · ${laporan.estimated_age} Thn` : ""}
+                    </p>
+                </div>
             </div>
 
             {/* Content */}
-            <div className="flex flex-1 flex-col gap-2 p-3.5">
-                {/* Nama */}
-                <div className="flex items-start justify-between gap-2">
-                    <h3 className="line-clamp-1 flex-1 text-sm font-semibold text-stone-800">
-                        {laporan.name ?? "Nama tidak diketahui"}
-                    </h3>
-                    <span
-                        className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${statusConfig.className}`}
-                    >
-                        {statusConfig.label}
-                    </span>
-                </div>
-
-                {/* Info singkat */}
-                <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-500">
-                    <span>{GENDER_LABEL[laporan.gender]}</span>
-                    {laporan.estimated_age && (
-                        <span>~{laporan.estimated_age} tahun</span>
-                    )}
-                </div>
-
+            <div className="flex flex-1 flex-col gap-2 p-3">
                 {/* Lokasi */}
                 <p className="flex items-center gap-1 text-xs text-stone-500">
                     <MapPin size={11} className="shrink-0 text-orange-400" />
@@ -121,11 +132,16 @@ export function ReportCard({ laporan }: ReportCardProps) {
                     </span>
                 </p>
 
-                {/* Tanggal */}
-                <p className="mt-auto flex items-center gap-1 text-xs text-stone-400">
-                    <Calendar size={11} className="shrink-0" />
-                    {formatDate(laporan.created_at)}
-                </p>
+                {/* Footer: waktu + arrow */}
+                <div className="flex items-center justify-between">
+                    <p className="flex items-center gap-1 text-xs text-stone-400">
+                        <Clock size={10} className="shrink-0" />
+                        Update {formatTimeAgo(laporan.created_at)}
+                    </p>
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-50 text-orange-500 transition group-hover:bg-orange-500 group-hover:text-white">
+                        <ArrowRight size={12} />
+                    </span>
+                </div>
             </div>
         </Link>
     );
@@ -135,11 +151,9 @@ export function ReportCard({ laporan }: ReportCardProps) {
 
 export function ReportCardSkeleton() {
     return (
-        <div className="flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-            <div className="aspect-[4/3] w-full animate-pulse bg-stone-100" />
-            <div className="flex flex-col gap-2.5 p-3.5">
-                <div className="h-4 w-3/4 animate-pulse rounded-full bg-stone-100" />
-                <div className="h-3 w-1/2 animate-pulse rounded-full bg-stone-100" />
+        <div className="flex flex-col overflow-hidden rounded-2xl border border-stone-100 bg-white shadow-sm">
+            <div className="w-full animate-pulse bg-stone-100" style={{ aspectRatio: "3/4" }} />
+            <div className="flex flex-col gap-2 p-3">
                 <div className="h-3 w-2/3 animate-pulse rounded-full bg-stone-100" />
                 <div className="h-3 w-1/3 animate-pulse rounded-full bg-stone-100" />
             </div>

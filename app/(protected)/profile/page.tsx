@@ -122,7 +122,7 @@ export default function ProfilePage() {
     });
 
     useEffect(() => {
-        if (!isLoggedIn) router.replace("/masuk");
+        if (!isLoggedIn) router.replace("/login");
     }, [isLoggedIn, router]);
 
     if (!isLoggedIn) return null;
