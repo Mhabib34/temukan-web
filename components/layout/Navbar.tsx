@@ -7,7 +7,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useUnreadCount } from "@/hooks";
 import { useLogout } from "@/hooks/useAuth";
 import { useState, useRef, useEffect } from "react";
-import {showConfirm} from "@/lib/sonner";
+import { showConfirm } from "@/lib/sonner";
 
 const SIDEBAR_LINKS = [
     { icon: Home, href: "/", label: "Beranda" },
@@ -69,11 +69,12 @@ function AvatarDropdown() {
                             onClick={() => {
                                 setOpen(false);
                                 showConfirm(
-                                "Anda yakin ingin keluar?",
-                                "",
-                                logout,
-                                "Keluar"
-                            )}}
+                                    "Anda yakin ingin keluar?",
+                                    "",
+                                    logout,
+                                    "Keluar"
+                                );
+                            }}
                             disabled={isPending}
                             className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
                         >
@@ -92,6 +93,7 @@ export function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
     const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+    const isHydrated = useAuthStore((s) => s.isHydrated); // ← cek hydration selesai
     const unreadCount = useUnreadCount();
 
     if (pathname.startsWith("/login") || pathname.startsWith("/register")) {
@@ -109,9 +111,9 @@ export function Navbar() {
                         <span className="text-white font-extrabold text-lg leading-none">T</span>
                     </Link>
 
-                    {/* Nav icons */}
+                    {/* Nav icons — tunggu hydrated sebelum filter protected */}
                     <nav className="flex flex-col items-center gap-1 flex-1">
-                        {SIDEBAR_LINKS.filter(l => !l.protected || isLoggedIn).map((link) => {
+                        {SIDEBAR_LINKS.filter(l => !l.protected || (isHydrated && isLoggedIn)).map((link) => {
                             const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
                             const Icon = link.icon;
                             return (
@@ -128,8 +130,8 @@ export function Navbar() {
                         })}
                     </nav>
 
-                    {/* Settings bottom */}
-                    {isLoggedIn && (
+                    {/* Settings bottom — hanya tampil kalau sudah hydrated & login */}
+                    {isHydrated && isLoggedIn && (
                         <Link href="/profile" title="Pengaturan"
                               className="w-10 h-10 rounded-xl flex items-center justify-center text-stone-400 hover:bg-stone-50 hover:text-stone-700 transition-all">
                             <Settings size={18} strokeWidth={1.8} />
@@ -143,18 +145,12 @@ export function Navbar() {
                         Temu<span className="text-orange-500">Kan</span>
                     </Link>
 
-                    {/* Search */}
-                    <div className="flex-1 max-w-xs mx-6">
-                        <div className="relative">
-                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-                            <input type="text" placeholder="Cari laporan..."
-                                   className="w-full h-8 pl-8 pr-3 rounded-full bg-stone-100 text-sm text-stone-700 placeholder:text-stone-400 outline-none focus:ring-2 focus:ring-orange-300 transition-all" />
-                        </div>
-                    </div>
-
-                    {/* Right */}
+                    {/* Right — skeleton saat belum hydrated, cegah flash */}
                     <div className="flex items-center gap-2">
-                        {isLoggedIn ? (
+                        {!isHydrated ? (
+                            // Placeholder animasi — ukuran sama agar layout tidak loncat
+                            <div className="w-24 h-8 rounded-full bg-stone-100 animate-pulse" />
+                        ) : isLoggedIn ? (
                             <>
                                 <Link href="/notification"
                                       className="relative w-8 h-8 rounded-full flex items-center justify-center text-stone-500 hover:bg-stone-100 transition-colors">
@@ -169,7 +165,6 @@ export function Navbar() {
                                         className="flex items-center gap-1.5 h-8 px-4 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold transition-all shadow-sm shadow-orange-200">
                                     Buat Laporan
                                 </button>
-                                {/* Avatar dengan dropdown */}
                                 <AvatarDropdown />
                             </>
                         ) : (
@@ -195,7 +190,10 @@ export function Navbar() {
                         Temu<span className="text-orange-500">Kan</span>
                     </Link>
                     <div className="flex items-center gap-2">
-                        {isLoggedIn ? (
+                        {!isHydrated ? (
+                            // Skeleton bulat kecil untuk mobile
+                            <div className="w-8 h-8 rounded-full bg-stone-100 animate-pulse" />
+                        ) : isLoggedIn ? (
                             <>
                                 <Link href="/notification" className="relative w-8 h-8 rounded-full flex items-center justify-center text-stone-500">
                                     <Bell size={18} />

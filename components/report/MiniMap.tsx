@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import type { ReportType } from "@/types";
 import "leaflet/dist/leaflet.css";
@@ -41,20 +40,27 @@ interface MiniMapProps {
 
 export default function MiniMap({ lat, lng, label, type }: MiniMapProps) {
     return (
-        <MapContainer
-            center={[lat, lng]}
-            zoom={15}
-            style={{ height: 200, width: "100%" }}
-            zoomControl={false}
-            attributionControl={false}
-            scrollWheelZoom={false}
-            dragging={false}
-            doubleClickZoom={false}
-        >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <Marker position={[lat, lng]} icon={makeIcon(type)}>
-                <Popup>{label}</Popup>
-            </Marker>
-        </MapContainer>
+        /*
+         * isolation: isolate membuat stacking context baru,
+         * sehingga z-index internal Leaflet (400–1000) tidak bisa
+         * menembus keluar dan menimpa elemen di luar wrapper ini.
+         */
+        <div style={{ isolation: "isolate" }}>
+            <MapContainer
+                center={[lat, lng]}
+                zoom={15}
+                style={{ height: 200, width: "100%" }}
+                zoomControl={false}
+                attributionControl={false}
+                scrollWheelZoom={false}
+                dragging={false}
+                doubleClickZoom={false}
+            >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <Marker position={[lat, lng]} icon={makeIcon(type)}>
+                    <Popup>{label}</Popup>
+                </Marker>
+            </MapContainer>
+        </div>
     );
 }

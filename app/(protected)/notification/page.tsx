@@ -120,7 +120,7 @@ export default function NotifikasiPage() {
     const { isLoggedIn } = useAuthStore();
 
     useEffect(() => {
-        if (!isLoggedIn) router.replace("/masuk");
+        if (!isLoggedIn) router.replace("/login");
     }, [isLoggedIn, router]);
 
     const { data, isLoading, isError, error } = useNotifikasi();

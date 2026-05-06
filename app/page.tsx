@@ -80,12 +80,12 @@ export default function HomePage() {
             </div>
 
             {/* ══ DESKTOP HERO (white) ══ */}
-            <div className="hidden md:block bg-white px-10 py-16 relative overflow-hidden">
+            <div className="hidden md:block md:px=10 bg-white py-16 relative overflow-hidden">
                 {/* Subtle bg texture */}
                 <div className="absolute inset-0 opacity-[0.015] pointer-events-none"
                      style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #000 1px, transparent 0)", backgroundSize: "32px 32px" }} />
 
-                <div className="max-w-6xl mx-auto grid grid-cols-2 gap-16 items-center">
+                <div className="mx-auto grid grid-cols-2 gap-16 items-center">
                     {/* Left: text */}
                     <div>
                         <p className="text-orange-500 text-xs font-bold tracking-widest uppercase mb-4">Platform Komunitas Indonesia</p>
@@ -148,7 +148,7 @@ export default function HomePage() {
             </div>
 
             {/* ══ STATS ══ */}
-            <div className="px-4 md:px-10 py-6 bg-stone-50">
+            <div className="px-4 md:px-10 py-6 bg-white">
                 <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
                     <StatCard value="42" label="Laporan Aktif" accent="border-orange-400"
                               icon={<svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" /></svg>} />

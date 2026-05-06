@@ -12,7 +12,7 @@ import { useAuthStore } from "@/store/authStore";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { updateLaporanSchema, type UpdateLaporanValues } from "@/schemas/reportSchema";
 import { PROVINSI_INDONESIA } from "@/lib/province";
-import {ReportDetailSkeleton} from "@/components/report/ReportDetailSkeleton";
+import { ReportDetailSkeleton } from "@/components/report/ReportDetailSkeleton";
 
 const LocationPicker = dynamic(
     () => import("@/components/report/LocationPicker"),
@@ -125,9 +125,8 @@ export default function EditReportPage() {
     const { user, isLoggedIn } = useAuthStore();
     const [photoFile, setPhotoFile] = useState<File | null>(null);
 
-    // Auth guard
     useEffect(() => {
-        if (!isLoggedIn) router.replace("/masuk");
+        if (!isLoggedIn) router.replace("/login");
     }, [isLoggedIn, router]);
 
     const { data, isLoading, isError } = useLaporanDetail(id);
@@ -147,7 +146,6 @@ export default function EditReportPage() {
         resolver: zodResolver(updateLaporanSchema),
     });
 
-    // Pre-fill form setelah data loaded
     useEffect(() => {
         if (!laporan) return;
         reset({
@@ -164,7 +162,6 @@ export default function EditReportPage() {
         });
     }, [laporan, reset]);
 
-    // Ownership guard setelah data loaded
     useEffect(() => {
         if (laporan && user && laporan.reporter_id !== user.id) {
             toast.error("Kamu tidak punya akses untuk mengedit laporan ini");
@@ -182,7 +179,6 @@ export default function EditReportPage() {
         try {
             await updateMutation.mutateAsync(values);
 
-            // Upload foto jika ada file baru
             if (photoFile) {
                 try {
                     await uploadMutation.mutateAsync(photoFile);
@@ -192,7 +188,6 @@ export default function EditReportPage() {
             }
 
             toast.success("Laporan berhasil diperbarui");
-            // useUpdateLaporan onSuccess sudah handle redirect ke /report/{id}
         } catch (err: unknown) {
             const msg =
                 (err as { response?: { data?: { message?: string } } })?.response?.data
@@ -204,7 +199,6 @@ export default function EditReportPage() {
     const isSaving = updateMutation.isPending || uploadMutation.isPending;
     const hasChanges = isDirty || photoFile !== null;
 
-    // ── Loading ──
     if (!isLoggedIn) return null;
 
     if (isLoading) {
@@ -215,7 +209,6 @@ export default function EditReportPage() {
         );
     }
 
-    // ── Error / 404 ──
     if (isError || !laporan) {
         return (
             <PageWrapper>
@@ -241,6 +234,7 @@ export default function EditReportPage() {
     }
 
     return (
+        // overflow-x-hidden di sini untuk backup, tapi fix utama ada di grid di bawah
         <PageWrapper>
             {/* ── Header ── */}
             <div className="mb-6 flex items-center gap-3">
@@ -259,10 +253,11 @@ export default function EditReportPage() {
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                <div className="grid gap-5 md:grid-cols-3">
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="grid w-full min-w-0 gap-5 md:grid-cols-2">
+
                     {/* ── Kolom Kiri: Info + Lokasi ── */}
-                    <div className="space-y-5 md:col-span-2">
+                    <div className="min-w-0 space-y-5">
                         {/* Section: Info Orang */}
                         <div className="rounded-2xl border border-stone-100 bg-white p-5 shadow-sm">
                             <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-stone-500 uppercase tracking-wide">
@@ -340,7 +335,6 @@ export default function EditReportPage() {
                             </h2>
 
                             <div className="space-y-4">
-                                {/* Last seen location */}
                                 <div>
                                     <Label required>Lokasi Terakhir Terlihat</Label>
                                     <input
@@ -396,12 +390,8 @@ export default function EditReportPage() {
                                                         <LocationPicker
                                                             value={currentCoords}
                                                             onChange={(coords) => {
-                                                                latField.onChange(
-                                                                    coords?.lat ?? null
-                                                                );
-                                                                lngField.onChange(
-                                                                    coords?.lng ?? null
-                                                                );
+                                                                latField.onChange(coords?.lat ?? null);
+                                                                lngField.onChange(coords?.lng ?? null);
                                                             }}
                                                         />
                                                     )}
@@ -415,7 +405,11 @@ export default function EditReportPage() {
                     </div>
 
                     {/* ── Kolom Kanan: Foto + Simpan ── */}
-                    <div className="space-y-4">
+                    {/*
+                        FIX: Kolom kanan pakai lebar fixed 280px (didefinisikan di grid-cols di atas).
+                        min-w-0 + w-full memastikan tidak meluber keluar.
+                    */}
+                    <div className="min-w-0 w-full space-y-4">
                         <div className="rounded-2xl border border-stone-100 bg-white p-5 shadow-sm">
                             <PhotoUpload
                                 currentUrl={laporan.photo_url}
@@ -424,7 +418,6 @@ export default function EditReportPage() {
                             />
                         </div>
 
-                        {/* Tombol aksi */}
                         <button
                             type="submit"
                             disabled={isSaving || !hasChanges}
@@ -449,7 +442,6 @@ export default function EditReportPage() {
                             Batal
                         </button>
 
-                        {/* Info type — tidak bisa diubah */}
                         <p className="text-center text-xs text-stone-400">
                             Jenis laporan ({laporan.type === "missing" ? "Orang Hilang" : "Orang Ditemukan"}) tidak dapat diubah.
                         </p>

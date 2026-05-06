@@ -86,7 +86,7 @@ export function useDeleteLaporan() {
         mutationFn: (id: string) => deleteLaporan(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: queryKeys.laporan.all });
-            router.push("/report/saya");
+            router.push("/report/me");
         },
     });
 }
