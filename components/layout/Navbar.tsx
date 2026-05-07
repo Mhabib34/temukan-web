@@ -195,6 +195,9 @@ export function Navbar() {
                             <div className="w-8 h-8 rounded-full bg-stone-100 animate-pulse" />
                         ) : isLoggedIn ? (
                             <>
+                                <Link href="/map" className="relative w-8 h-8 rounded-full flex items-center justify-center text-stone-500">
+                                    <BookOpen size={18}/>
+                                </Link>
                                 <Link href="/notification" className="relative w-8 h-8 rounded-full flex items-center justify-center text-stone-500">
                                     <Bell size={18} />
                                     {unreadCount > 0 && <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full" />}
