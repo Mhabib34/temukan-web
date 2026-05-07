@@ -15,107 +15,11 @@ import {
 import { useAuthStore } from "@/store/authStore";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import type { Notification } from "@/types";
+import {NotifSkeleton} from "@/components/skeleton/NotifSkeleton";
+import {NotifItem} from "@/components/notification/NotifItem";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function timeAgo(iso: string) {
-    return formatDistanceToNow(new Date(iso), { addSuffix: true, locale: localeId });
-}
-
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
-
-function NotifSkeleton() {
-    return (
-        <div className="animate-pulse divide-y divide-stone-100">
-            {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="flex gap-3 px-4 py-4">
-                    <div className="mt-0.5 h-9 w-9 shrink-0 rounded-full bg-stone-200" />
-                    <div className="flex-1 space-y-2">
-                        <div className="h-3.5 w-3/4 rounded bg-stone-200" />
-                        <div className="h-3 w-1/3 rounded bg-stone-100" />
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-}
-
-// ─── Notif Item ───────────────────────────────────────────────────────────────
-
-function NotifItem({ notif }: { notif: Notification }) {
-    const router = useRouter();
-    const markRead = useMarkNotifRead();
-
-    function handleClick() {
-        if (!notif.is_read) {
-            markRead.mutate(notif.id, {
-                onError: () => toast.error("Gagal menandai notifikasi"),
-            });
-        }
-
-        if (notif.match_id) {
-            router.push(`/match/${notif.match_id}`);
-        } else if (notif.report_id) {
-            router.push(`/report/${notif.report_id}`);
-        }
-    }
-
-    const isClickable = !!(notif.match_id || notif.report_id);
-
-    return (
-        <div
-            onClick={isClickable ? handleClick : undefined}
-            className={[
-                "flex gap-3 px-4 py-4 transition",
-                !notif.is_read ? "bg-orange-50" : "bg-white",
-                isClickable ? "cursor-pointer hover:bg-stone-50" : "",
-                !notif.is_read && isClickable ? "hover:bg-orange-100/60" : "",
-            ].join(" ")}
-        >
-            {/* Icon / unread dot */}
-            <div className="relative mt-0.5 shrink-0">
-                <div
-                    className={[
-                        "flex h-9 w-9 items-center justify-center rounded-full",
-                        !notif.is_read ? "bg-orange-100" : "bg-stone-100",
-                    ].join(" ")}
-                >
-                    <Bell
-                        className={[
-                            "h-4 w-4",
-                            !notif.is_read ? "text-orange-500" : "text-stone-400",
-                        ].join(" ")}
-                    />
-                </div>
-                {!notif.is_read && (
-                    <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-orange-500" />
-                )}
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-                <p
-                    className={[
-                        "text-sm leading-snug",
-                        !notif.is_read ? "font-medium text-stone-900" : "text-stone-600",
-                    ].join(" ")}
-                >
-                    {notif.message}
-                </p>
-                <p className="mt-1 text-xs text-stone-400">{timeAgo(notif.created_at)}</p>
-            </div>
-
-            {/* Unread indicator kanan */}
-            {!notif.is_read && (
-                <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange-400" />
-            )}
-        </div>
-    );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
-export default function NotifikasiPage() {
+export default function NotificationPage() {
     const router = useRouter();
     const { isLoggedIn } = useAuthStore();
 

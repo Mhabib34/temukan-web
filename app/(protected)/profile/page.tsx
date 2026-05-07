@@ -3,8 +3,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
-import { id as localeId } from "date-fns/locale";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/authStore";
 import { useLogout } from "@/hooks/useAuth";
@@ -12,6 +10,10 @@ import { api } from "@/lib/axios";
 import { queryKeys } from "@/lib/queryClient";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import type { UserProfile } from "@/types";
+import {ProfilSkeleton} from "@/components/skeleton/ProfileSkeleton";
+import {ProfileHeaderCard} from "@/components/card/ProfileHeaderCard";
+import {ProfileInfoCard} from "@/components/card/ProfileInfoCard";
+import {showConfirm} from "@/lib/sonner";
 
 // ── fetch profil terbaru dari server ─────────────────────────────────────────
 async function fetchMe(): Promise<UserProfile> {
@@ -19,97 +21,6 @@ async function fetchMe(): Promise<UserProfile> {
     return res.data.data;
 }
 
-// ── Role label ────────────────────────────────────────────────────────────────
-const ROLE_MAP: Record<UserProfile["role"], { label: string; emoji: string; desc: string }> = {
-    finder: {
-        label: "Penemu",
-        emoji: "🔍",
-        desc: "Melaporkan orang yang ditemukan",
-    },
-    seeker: {
-        label: "Pencari",
-        emoji: "❤️",
-        desc: "Mencari anggota keluarga yang hilang",
-    },
-    volunteer: {
-        label: "Relawan",
-        emoji: "🤝",
-        desc: "Membantu koordinasi dan verifikasi laporan",
-    },
-};
-
-// ── Info row ──────────────────────────────────────────────────────────────────
-function InfoRow({
-                     label,
-                     value,
-                     mono,
-                 }: {
-    label: string;
-    value: string | null | undefined;
-    mono?: boolean;
-}) {
-    return (
-        <div className="flex items-start justify-between gap-4 py-3.5 border-b border-stone-50 last:border-0">
-            <span className="text-sm text-stone-500 flex-shrink-0 w-28">{label}</span>
-            <span
-                className={`text-sm text-stone-800 font-medium text-right ${
-                    mono ? "font-mono" : ""
-                }`}
-            >
-                {value ?? (
-                    <span className="text-stone-300 font-normal">Belum diisi</span>
-                )}
-            </span>
-        </div>
-    );
-}
-
-// ── Avatar initials ───────────────────────────────────────────────────────────
-function Avatar({ name }: { name: string }) {
-    const initials = name
-        .split(" ")
-        .slice(0, 2)
-        .map((w) => w[0]?.toUpperCase() ?? "")
-        .join("");
-
-    return (
-        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md flex-shrink-0">
-            <span className="text-2xl font-extrabold text-white tracking-wide">
-                {initials}
-            </span>
-        </div>
-    );
-}
-
-// ── Skeleton ──────────────────────────────────────────────────────────────────
-function ProfilSkeleton() {
-    return (
-        <PageWrapper contained padded>
-            <div className="animate-pulse space-y-5 max-w-lg mx-auto">
-                <div className="rounded-2xl border border-stone-100 bg-white shadow-sm p-6">
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="w-20 h-20 rounded-2xl bg-stone-100" />
-                        <div className="space-y-2 flex-1">
-                            <div className="h-5 w-40 bg-stone-100 rounded-lg" />
-                            <div className="h-4 w-28 bg-stone-100 rounded-lg" />
-                        </div>
-                    </div>
-                    {[1, 2, 3, 4].map((i) => (
-                        <div
-                            key={i}
-                            className="flex justify-between py-3.5 border-b border-stone-50"
-                        >
-                            <div className="h-4 w-24 bg-stone-100 rounded" />
-                            <div className="h-4 w-32 bg-stone-100 rounded" />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </PageWrapper>
-    );
-}
-
-// ── Main ──────────────────────────────────────────────────────────────────────
 export default function ProfilePage() {
     const router = useRouter();
     const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
@@ -139,16 +50,11 @@ export default function ProfilePage() {
             </PageWrapper>
         );
     }
-
-    const roleInfo = ROLE_MAP[user.role];
-    const joinedAt = format(new Date(user.created_at), "d MMMM yyyy", {
-        locale: localeId,
-    });
+    
 
     async function handleLogout() {
         try {
             await logout.mutateAsync();
-            router.replace("/");
         } catch {
             toast.error("Gagal logout, coba lagi.");
         }
@@ -158,41 +64,10 @@ export default function ProfilePage() {
         <PageWrapper contained padded>
             <div className="max-w-lg mx-auto space-y-4">
                 {/* ── Header card ── */}
-                <div className="rounded-2xl border border-stone-100 bg-white shadow-sm p-6">
-                    <div className="flex items-center gap-4 mb-5">
-                        <Avatar name={user.name} />
-                        <div className="min-w-0">
-                            <h1 className="text-lg font-bold text-stone-900 truncate">
-                                {user.name}
-                            </h1>
-                            <p className="text-sm text-stone-500 truncate">{user.email}</p>
-                            <div className="mt-2 inline-flex items-center gap-1.5 bg-orange-50 rounded-full px-3 py-1">
-                                <span className="text-base leading-none">{roleInfo.emoji}</span>
-                                <span className="text-xs font-semibold text-orange-700">
-                                    {roleInfo.label}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Role description */}
-                    <div className="rounded-xl bg-stone-50 px-4 py-3 text-sm text-stone-500 leading-relaxed">
-                        {roleInfo.desc}
-                    </div>
-                </div>
+                <ProfileHeaderCard user={user} />
 
                 {/* ── Info card ── */}
-                <div className="rounded-2xl border border-stone-100 bg-white shadow-sm px-5 py-2">
-                    <InfoRow label="Nama lengkap" value={user.name} />
-                    <InfoRow label="Email" value={user.email} mono />
-                    <InfoRow
-                        label="Nomor HP"
-                        value={user.phone ? user.phone : null}
-                        mono
-                    />
-                    <InfoRow label="Bergabung" value={joinedAt} />
-                    <InfoRow label="ID Akun" value={user.id} mono />
-                </div>
+                <ProfileInfoCard user={user} />
 
                 {/* ── Shortcut links ── */}
                 <div className="rounded-2xl border border-stone-100 bg-white shadow-sm divide-y divide-stone-50">
@@ -248,7 +123,14 @@ export default function ProfilePage() {
 
                 {/* ── Logout ── */}
                 <button
-                    onClick={handleLogout}
+                    onClick={() => {
+                        showConfirm(
+                            "Anda yakin ingin keluar?",
+                            "",
+                            handleLogout,
+                            "Keluar"
+                        );
+                    }}
                     disabled={logout.isPending}
                     className="w-full rounded-2xl border border-red-100 bg-white py-3.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 active:scale-95 disabled:opacity-50 shadow-sm"
                 >

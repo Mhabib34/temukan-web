@@ -53,7 +53,6 @@ interface ReportCardProps {
 
 export function ReportCard({ laporan }: ReportCardProps) {
     const typeConfig = TYPE_CONFIG[laporan.type];
-    const statusConfig = STATUS_CONFIG[laporan.status];
 
     return (
         <Link

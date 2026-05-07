@@ -1,39 +1,26 @@
-"use client";
+ "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState} from "react";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ArrowLeft, User, ImagePlus, X, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, User, Loader2, AlertCircle } from "lucide-react";
 import { useLaporanDetail, useUpdateLaporan, useUploadFoto } from "@/hooks";
 import { useAuthStore } from "@/store/authStore";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { updateLaporanSchema, type UpdateLaporanValues } from "@/schemas/reportSchema";
 import { PROVINSI_INDONESIA } from "@/lib/province";
-import { ReportDetailSkeleton } from "@/components/report/ReportDetailSkeleton";
+import { ReportDetailSkeleton } from "@/components/skeleton/ReportDetailSkeleton";
+ import {Label} from "@/components/report/Label";
+ import {FieldError} from "@/components/report/FieldError";
+ import {PhotoUpload} from "@/components/report/PhotoUpload";
 
 const LocationPicker = dynamic(
     () => import("@/components/report/LocationPicker"),
     { ssr: false }
 );
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function FieldError({ message }: { message?: string }) {
-    if (!message) return null;
-    return <p className="mt-1 text-xs text-red-500">{message}</p>;
-}
-
-function Label({ children, required }: { children: React.ReactNode; required?: boolean }) {
-    return (
-        <label className="mb-1.5 block text-sm font-medium text-stone-700">
-            {children}
-            {required && <span className="ml-0.5 text-red-400">*</span>}
-        </label>
-    );
-}
 
 const inputClass =
     "w-full rounded-xl border border-stone-200 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-100";
@@ -41,83 +28,6 @@ const inputClass =
 const selectClass =
     "w-full rounded-xl border border-stone-200 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-100";
 
-// ─── Photo Upload Preview ─────────────────────────────────────────────────────
-
-function PhotoUpload({
-                         currentUrl,
-                         file,
-                         onChange,
-                     }: {
-    currentUrl: string | null;
-    file: File | null;
-    onChange: (f: File | null) => void;
-}) {
-    const inputRef = useRef<HTMLInputElement>(null);
-    const preview = file ? URL.createObjectURL(file) : currentUrl;
-
-    return (
-        <div className="space-y-2">
-            <Label>Foto</Label>
-            <div
-                onClick={() => inputRef.current?.click()}
-                className="relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-stone-200 bg-stone-50 transition hover:border-orange-300 hover:bg-orange-50"
-                style={{ aspectRatio: "4/3" }}
-            >
-                {preview ? (
-                    <>
-                        <img
-                            src={preview}
-                            alt="Preview foto"
-                            className="h-full w-full object-cover"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition hover:opacity-100">
-                            <p className="text-xs font-semibold text-white">Ganti Foto</p>
-                        </div>
-                    </>
-                ) : (
-                    <div className="flex flex-col items-center gap-2 p-6 text-center">
-                        <ImagePlus className="h-8 w-8 text-stone-300" />
-                        <p className="text-xs text-stone-400">
-                            Klik untuk upload foto
-                            <br />
-                            <span className="text-stone-300">JPG, PNG, WebP · Maks 5MB</span>
-                        </p>
-                    </div>
-                )}
-            </div>
-
-            {file && (
-                <button
-                    type="button"
-                    onClick={() => onChange(null)}
-                    className="flex items-center gap-1.5 text-xs text-stone-400 transition hover:text-red-500"
-                >
-                    <X className="h-3 w-3" />
-                    Batalkan perubahan foto
-                </button>
-            )}
-
-            <input
-                ref={inputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-                onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (!f) return;
-                    if (f.size > 5 * 1024 * 1024) {
-                        toast.error("Ukuran foto maksimal 5MB");
-                        return;
-                    }
-                    onChange(f);
-                    e.target.value = "";
-                }}
-            />
-        </div>
-    );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function EditReportPage() {
     const { id } = useParams<{ id: string }>();
@@ -274,7 +184,7 @@ export default function EditReportPage() {
                                         placeholder="Kosongkan jika tidak diketahui"
                                         className={inputClass}
                                     />
-                                    <FieldError message={errors.name?.message} />
+                                    <FieldError msg={errors.name?.message} />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
@@ -286,7 +196,7 @@ export default function EditReportPage() {
                                             <option value="female">Perempuan</option>
                                             <option value="unknown">Tidak Diketahui</option>
                                         </select>
-                                        <FieldError message={errors.gender?.message} />
+                                        <FieldError msg={errors.gender?.message} />
                                     </div>
 
                                     {/* Usia */}
@@ -300,7 +210,7 @@ export default function EditReportPage() {
                                             placeholder="0–120"
                                             className={inputClass}
                                         />
-                                        <FieldError message={errors.estimated_age?.message} />
+                                        <FieldError msg={errors.estimated_age?.message} />
                                     </div>
                                 </div>
 
@@ -311,7 +221,7 @@ export default function EditReportPage() {
                                         <option value="active">Aktif — masih dicari</option>
                                         <option value="resolved">Selesai — sudah ditemukan</option>
                                     </select>
-                                    <FieldError message={errors.status?.message} />
+                                    <FieldError msg={errors.status?.message} />
                                 </div>
 
                                 {/* Deskripsi */}
@@ -323,7 +233,7 @@ export default function EditReportPage() {
                                         placeholder="Ciri fisik, pakaian, kondisi terakhir..."
                                         className={inputClass + " resize-none"}
                                     />
-                                    <FieldError message={errors.description?.message} />
+                                    <FieldError msg={errors.description?.message} />
                                 </div>
                             </div>
                         </div>
@@ -342,7 +252,7 @@ export default function EditReportPage() {
                                         placeholder="Alamat atau deskripsi lokasi"
                                         className={inputClass}
                                     />
-                                    <FieldError message={errors.last_seen_location?.message} />
+                                    <FieldError msg={errors.last_seen_location?.message} />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
@@ -354,7 +264,7 @@ export default function EditReportPage() {
                                             placeholder="contoh: Medan"
                                             className={inputClass}
                                         />
-                                        <FieldError message={errors.city?.message} />
+                                        <FieldError msg={errors.city?.message} />
                                     </div>
 
                                     {/* Provinsi */}
@@ -368,7 +278,7 @@ export default function EditReportPage() {
                                                 </option>
                                             ))}
                                         </select>
-                                        <FieldError message={errors.province?.message} />
+                                        <FieldError msg={errors.province?.message} />
                                     </div>
                                 </div>
 

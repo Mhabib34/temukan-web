@@ -3,49 +3,13 @@
 import Link from "next/link";
 import { useLaporanList } from "@/hooks";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { ReportCard, ReportCardSkeleton } from "@/components/report/ReportCard";
 import Image from "next/image";
+import {StatCard} from "@/components/card/StatCard";
+import {CtaBottom} from "@/components/fragment/CtaBottom";
+import {Footer} from "@/components/fragment/Footer";
+import {HowToWorkDesktop} from "@/components/fragment/HowToWorkDesktop";
 
-// ── Stat Card ─────────────────────────────────────────────────────────────────
-function StatCard({ value, label, icon, accent }: {
-    value: string; label: string; icon: React.ReactNode; accent: string;
-}) {
-    return (
-        <div className={`bg-white rounded-2xl p-5 flex items-center gap-4 border-l-4 ${accent} shadow-sm`}>
-            <div className="text-stone-400">{icon}</div>
-            <div>
-                <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-0.5">{label}</p>
-                <p className="text-2xl font-extrabold text-stone-900 leading-none">{value}</p>
-            </div>
-        </div>
-    );
-}
-
-// ── Step Card ─────────────────────────────────────────────────────────────────
-function StepCard({ step, title, desc, isLast = false }: {
-    step: number; title: string; desc: string; isLast?: boolean;
-}) {
-    return (
-        <div className="flex gap-4 relative">
-            {/* Connector line */}
-            {!isLast && (
-                <div className="absolute left-4 top-9 bottom-0 w-px border-l-2 border-dashed border-orange-200" />
-            )}
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 z-10
-                ${step === 1 ? "bg-orange-500 text-white shadow-md shadow-orange-200" : "bg-white border-2 border-orange-300 text-orange-500"}`}>
-                {step}
-            </div>
-            <div className="pb-6">
-                <p className="text-sm font-bold text-stone-800 mb-1">{title}</p>
-                <p className="text-xs text-stone-500 leading-relaxed">{desc}</p>
-            </div>
-        </div>
-    );
-}
-
-// ── Main ──────────────────────────────────────────────────────────────────────
 export default function HomePage() {
-    const currentYear = new Date().getFullYear();
     const { data, isLoading } = useLaporanList({ limit: 3, status: "active" });
 
     const laporanTerbaru = data?.data.reports ?? [];
@@ -162,81 +126,7 @@ export default function HomePage() {
             </div>
 
             {/* ══ LAPORAN + CARA KERJA (2 col desktop) ══ */}
-            <div className="px-4 py-8">
-                <div className="max-w-6xl mx-auto md:grid md:grid-cols-[1fr_300px] md:gap-8">
-
-                    {/* Laporan Terbaru */}
-                    <div>
-                        <div className="flex items-start justify-between mb-4">
-                            <div>
-                                <h2 className="text-lg font-bold text-stone-900">Laporan Terbaru</h2>
-                                <p className="text-xs text-stone-500 mt-0.5">Membantu proses pencarian di sekitar Anda</p>
-                            </div>
-                            <Link href="/report"
-                                  className="flex items-center gap-1 text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors mt-1">
-                                Lihat Semua
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                </svg>
-                            </Link>
-                        </div>
-
-                        {/* Mobile: horizontal list cards */}
-                        <div className="md:hidden space-y-3">
-                            {isLoading ? (
-                                [1, 2, 3].map(i => <ReportCardSkeleton key={i} />)
-                            ) : laporanTerbaru.length === 0 ? (
-                                <div className="rounded-2xl border border-stone-100 bg-white p-8 text-center">
-                                    <p className="text-stone-400 text-sm">Belum ada laporan aktif.</p>
-                                </div>
-                            ) : (
-                                laporanTerbaru.map(l => <ReportCard key={l.id} laporan={l} />)
-                            )}
-                        </div>
-
-                        {/* Desktop: grid */}
-                        <div className="hidden md:grid md:grid-cols-3 gap-4">
-                            {isLoading ? (
-                                [1, 2, 3].map(i => <ReportCardSkeleton key={i} />)
-                            ) : laporanTerbaru.length === 0 ? (
-                                <div className="col-span-3 rounded-2xl border border-stone-100 bg-white p-10 text-center">
-                                    <p className="text-stone-400 text-sm">Belum ada laporan aktif.</p>
-                                </div>
-                            ) : (
-                                laporanTerbaru.map(l => <ReportCard key={l.id} laporan={l} />)
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Cara Kerja — desktop only sidebar */}
-                    <div className="hidden md:block">
-                        <div className="bg-white rounded-3xl border border-stone-100 shadow-sm p-6">
-                            <p className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-5">Cara Kerja Kami</p>
-                            <div className="space-y-0">
-                                <StepCard step={1} title="Laporkan Kehilangan"
-                                          desc="Isi formulir detail dengan foto terbaru dan lokasi terakhir orang yang dicari." />
-                                <StepCard step={2} title="Verifikasi Kilat"
-                                          desc="Tim admin kami memverifikasi laporan untuk memastikan data akurat sebelum disebarkan." />
-                                <StepCard step={3} title="Penyebaran Luas"
-                                          desc="Notifikasi dikirim ke ribuan relawan di radius area kehilangan secara real-time." />
-                                <StepCard step={4} title="Update & Reuni" isLast
-                                          desc="Terima info dari saksi mata langsung di peta untuk mempermudah penemuan." />
-                            </div>
-                            {/* Security note */}
-                            <div className="mt-4 p-3 bg-stone-50 rounded-xl flex gap-2.5">
-                                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shrink-0">
-                                    <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                                    </svg>
-                                </div>
-                                <p className="text-xs text-stone-500 leading-relaxed">
-                                    Sistem kami terenkripsi end-to-end dan bekerja sama dengan pihak berwajib setempat
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+           <HowToWorkDesktop isLoading={isLoading} laporanTerbaru={laporanTerbaru} />
 
             {/* ══ CARA KERJA MOBILE ══ */}
             <div className="md:hidden px-4 pb-8">
@@ -262,45 +152,10 @@ export default function HomePage() {
             </div>
 
             {/* ══ CTA BOTTOM ══ */}
-            <div className="px-4 pb-10">
-                <div className="max-w-6xl mx-auto">
-                    <div className="bg-orange-500 rounded-3xl px-8 py-12 text-center relative overflow-hidden">
-                        <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 pointer-events-none" />
-                        <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/10 pointer-events-none" />
-                        <div className="relative z-10">
-                            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3 leading-tight">
-                                Jadilah Bagian dari<br />Solusi Kemanusiaan Kami.
-                            </h2>
-                            <p className="text-orange-100 text-sm md:text-base mb-7 max-w-md mx-auto leading-relaxed">
-                                Bergabunglah sebagai relawan dan bantu awasi lingkungan sekitar Anda.
-                                Keberadaan Anda bisa menyelamatkan nyawa seseorang hari ini.
-                            </p>
-                            <div className="flex flex-col sm:flex-row justify-center gap-3">
-                                <Link href="/register"
-                                      className="h-11 px-8 rounded-2xl bg-white text-orange-600 font-bold text-sm flex items-center justify-center shadow-md hover:bg-orange-50 transition-all active:scale-95">
-                                    Daftar Relawan
-                                </Link>
-                                <Link href="/report"
-                                      className="h-11 px-8 rounded-2xl bg-orange-600 text-white font-semibold text-sm flex items-center justify-center border-2 border-orange-400 hover:bg-orange-700 transition-all active:scale-95">
-                                    Donasi Dukungan
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <CtaBottom />
 
             {/* ══ FOOTER ══ */}
-            <footer className="border-t border-stone-200 bg-white px-4 py-5">
-                <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <p className="text-xs text-stone-400">&copy;{currentYear}{" "} TemuKan Indonesia. Bersama Memulangkan yang Terpisah.</p>
-                    <div className="flex items-center gap-5">
-                        {["Kebijakan Privasi", "Syarat & Ketentuan", "Hubungi Kami"].map(item => (
-                            <a key={item} href="#" className="text-xs text-stone-400 hover:text-stone-600 transition-colors">{item}</a>
-                        ))}
-                    </div>
-                </div>
-            </footer>
+            <Footer />
 
         </PageWrapper>
     );
