@@ -3,3 +3,4 @@ export * from "./report";
 export * from "./map";
 export * from "./match";
 export * from "./notification";
+export * from "./stats";
