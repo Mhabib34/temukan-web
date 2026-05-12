@@ -9,6 +9,7 @@ export function DesktopLeftPanel() {
   const { data: stats, isLoading } = useStats();
 
   const totalResolved = stats?.total_resolved;
+  const totalVolunteers = stats?.total_volunteers;
 
   return (
     <div className="flex flex-col justify-between bg-orange-500 px-12 py-12 relative overflow-hidden">
@@ -76,7 +77,7 @@ export function DesktopLeftPanel() {
           ) : (
             <p className="text-white font-bold text-2xl">
               {stats?.total_resolved !== undefined
-                ? `${stats.total_resolved.toLocaleString("id-ID")}+`
+                ? `${totalResolved.toLocaleString("id-ID")}+`
                 : "—"}
             </p>
           )}
@@ -88,7 +89,7 @@ export function DesktopLeftPanel() {
           ) : (
             <p className="text-white font-bold text-2xl">
               {stats?.total_volunteers !== undefined
-                ? `${(stats.total_volunteers / 1000).toFixed(0)}k`
+                ? `${(totalVolunteers / 1000).toFixed(0)}k`
                 : "—"}
             </p>
           )}
