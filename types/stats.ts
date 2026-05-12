@@ -3,4 +3,5 @@ export interface StatsData {
   total_volunteers: number;
   resolved_last_24h: number;
   unique_cities: number;
+  total_resolved: number;
 }
