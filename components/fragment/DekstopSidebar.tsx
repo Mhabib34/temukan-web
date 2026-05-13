@@ -1,20 +1,12 @@
 import Link from "next/link";
-import {
-  Bell,
-  BookOpen,
-  Clock,
-  Home,
-  Search,
-  Settings,
-  Users,
-} from "lucide-react";
+import { Bell, Clock, Home, Map, Search, Settings, Users } from "lucide-react";
 import { AvatarDropdown } from "@/components/fragment/AvatarDropdown";
 import { useRouter } from "next/navigation";
 
 const SIDEBAR_LINKS = [
   { icon: Home, href: "/", label: "Beranda" },
   { icon: Search, href: "/report", label: "Cari Laporan" },
-  { icon: BookOpen, href: "/map", label: "Peta" },
+  { icon: Map, href: "/map", label: "Peta" },
   { icon: Users, href: "/match", label: "Match", protected: true },
   { icon: Clock, href: "/report/me", label: "Riwayat", protected: true },
 ];

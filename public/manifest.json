@@ -1,0 +1,21 @@
+{
+  "name": "TemuKan",
+  "short_name": "TemuKan",
+  "description": "Platform pencarian orang hilang di Indonesia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "/icons/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
