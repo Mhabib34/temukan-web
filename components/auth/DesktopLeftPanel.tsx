@@ -12,7 +12,7 @@ export function DesktopLeftPanel() {
   const totalVolunteers = stats?.total_volunteers;
 
   return (
-    <div className="flex flex-col justify-between bg-orange-500 px-12 py-12 relative overflow-hidden">
+    <div className="flex flex-col justify-between bg-orange-500 px-12 py-12 relative overflow-hidden rounded-tr-[200px] rounded-br-[200px]">
       {/* Decorative circles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-25 -left-25 w-112.5 h-112.5 rounded-full bg-white opacity-[0.07]" />
