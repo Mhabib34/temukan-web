@@ -10,12 +10,12 @@ export const metadata: Metadata = {
     template: "%s | TemuKan",
   },
   description:
-      "Platform pencarian orang hilang — menghubungkan penemu, keluarga pencari, dan relawan di Indonesia.",
+    "Platform pencarian orang hilang — menghubungkan penemu, keluarga pencari, dan relawan di Indonesia.",
   keywords: ["orang hilang", "pencarian", "temukan", "relawan", "Indonesia"],
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/icon-192x192.png",
-    apple: "/icons/apple-touch-icon.png",
+    icon: "/icons/icon.png",
+    apple: "/icons/icon.png",
   },
   openGraph: {
     title: "TemuKan",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,     // Cegah zoom tidak sengaja di mobile
+  maximumScale: 1, // Cegah zoom tidak sengaja di mobile
   themeColor: "#ffffff",
 };
 
@@ -41,12 +41,10 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-      <html lang="id" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans antialiased">
-      <Providers>
-        {children}
-      </Providers>
+        <Providers>{children}</Providers>
       </body>
-      </html>
+    </html>
   );
 }
