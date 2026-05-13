@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "FAQ — TemuKan",
+  title: "FAQ — Titip Jejak",
   description:
-    "Pertanyaan yang sering ditanyakan seputar platform TemuKan — cara melapor, keamanan data, cara kerja pencarian, dan lainnya.",
+    "Pertanyaan yang sering ditanyakan seputar platform Titip Jejak — cara melapor, keamanan data, cara kerja pencarian, dan lainnya.",
 };
 
 const faqs = [
@@ -13,16 +13,16 @@ const faqs = [
     category: "Umum",
     items: [
       {
-        q: "Apa itu TemuKan?",
-        a: "TemuKan adalah platform komunitas berbasis teknologi yang membantu proses pencarian orang hilang di Indonesia. Kami menghubungkan penemu, pencari, dan relawan dalam satu ekosistem agar informasi bisa menyebar lebih cepat dan terkoordinasi.",
+        q: "Apa itu Titip Jejak?",
+        a: "Titip Jejak adalah platform komunitas berbasis teknologi yang membantu proses pencarian orang hilang di Indonesia. Kami menghubungkan penemu, pencari, dan relawan dalam satu ekosistem agar informasi bisa menyebar lebih cepat dan terkoordinasi.",
       },
       {
-        q: "Apakah TemuKan gratis digunakan?",
-        a: "Ya, sepenuhnya gratis. TemuKan adalah platform nirlaba yang tidak memungut biaya apapun dari pengguna. Operasional platform bergantung pada donasi sukarela dari komunitas.",
+        q: "Apakah Titip Jejak gratis digunakan?",
+        a: "Ya, sepenuhnya gratis. Titip Jejak adalah platform nirlaba yang tidak memungut biaya apapun dari pengguna. Operasional platform bergantung pada donasi sukarela dari komunitas.",
       },
       {
-        q: "Siapa yang mengelola TemuKan?",
-        a: "TemuKan dibuat dan dikelola oleh Muhammad Habib, developer independen. Platform ini bukan milik perusahaan komersial dan tidak memiliki investor.",
+        q: "Siapa yang mengelola Titip Jejak?",
+        a: "Titip Jejak dibuat dan dikelola oleh Muhammad Habib, developer independen. Platform ini bukan milik perusahaan komersial dan tidak memiliki investor.",
       },
     ],
   },
@@ -51,7 +51,7 @@ const faqs = [
     category: "Privasi & Keamanan",
     items: [
       {
-        q: "Apakah data saya aman di TemuKan?",
+        q: "Apakah data saya aman di Titip Jejak?",
         a: "Kami menjaga data Anda dengan serius. Data tidak dijual atau dibagikan ke pihak ketiga untuk tujuan komersial. Informasi hanya digunakan dalam konteks pencarian orang hilang di dalam platform.",
       },
       {
@@ -76,8 +76,8 @@ const faqs = [
         a: 'Kirim detail masalah ke mhabib34official@gmail.com dengan subjek "Laporan Bug". Sertakan tangkapan layar jika memungkinkan. Kami sangat menghargai setiap laporan untuk memperbaiki platform.',
       },
       {
-        q: "Apakah TemuKan tersedia sebagai aplikasi mobile?",
-        a: "Saat ini TemuKan dapat diakses melalui browser di perangkat apapun dan sudah dioptimalkan untuk mobile. Aplikasi native sedang dalam pertimbangan pengembangan ke depan.",
+        q: "Apakah Titip Jejak tersedia sebagai aplikasi mobile?",
+        a: "Saat ini Titip Jejak dapat diakses melalui browser di perangkat apapun dan sudah dioptimalkan untuk mobile. Aplikasi native sedang dalam pertimbangan pengembangan ke depan.",
       },
     ],
   },
@@ -149,7 +149,7 @@ export default function FaqPage() {
             href="mailto:mhabib34official@gmail.com"
             className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 transition-colors"
           >
-            ✉️ Kirim Pertanyaan
+            Kirim Pertanyaan
           </a>
         </div>
 
@@ -159,7 +159,7 @@ export default function FaqPage() {
             href="/"
             className="text-sm text-orange-500 font-semibold hover:underline"
           >
-            ← Kembali ke Beranda
+            Kembali ke Beranda
           </Link>
         </div>
       </div>

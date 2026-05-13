@@ -6,21 +6,27 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "TemuKan",
-    template: "%s | TemuKan",
+    default: "Titip Jejak",
+    template: "%s | Titip Jejak",
   },
   description:
     "Platform pencarian orang hilang — menghubungkan penemu, keluarga pencari, dan relawan di Indonesia.",
-  keywords: ["orang hilang", "pencarian", "temukan", "relawan", "Indonesia"],
+  keywords: [
+    "orang hilang",
+    "pencarian",
+    "titip jejak",
+    "relawan",
+    "Indonesia",
+  ],
   manifest: "/manifest.json",
   icons: {
     icon: "/icons/icon.png",
     apple: "/icons/icon.png",
   },
   openGraph: {
-    title: "TemuKan",
+    title: "Titip Jejak",
     description: "Platform pencarian orang hilang di Indonesia.",
-    siteName: "TemuKan",
+    siteName: "Titip Jejak",
     locale: "id_ID",
     type: "website",
   },

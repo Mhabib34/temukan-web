@@ -324,7 +324,7 @@ export function RegisterForm({ idSuffix }: { idSuffix: string }) {
               >
                 Kebijakan Privasi
               </a>{" "}
-              yang berlaku di TemuKan.
+              yang berlaku di Titip Jejak.
             </label>
           </div>
           {errors.terms && (

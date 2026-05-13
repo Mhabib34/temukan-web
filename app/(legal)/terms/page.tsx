@@ -3,9 +3,9 @@ import { PageWrapper } from "@/components/layout/PageWrapper";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Syarat & Ketentuan — TemuKan",
+  title: "Syarat & Ketentuan — Titip Jejak",
   description:
-    "Baca syarat dan ketentuan penggunaan platform TemuKan — komunitas pencarian orang hilang di Indonesia.",
+    "Baca syarat dan ketentuan penggunaan platform Titip Jejak — komunitas pencarian orang hilang di Indonesia.",
 };
 
 const allowed = [
@@ -37,7 +37,7 @@ export default function TermsPage() {
             Syarat & Ketentuan
           </h1>
           <p className="text-stone-500 text-lg leading-relaxed">
-            Dengan menggunakan TemuKan, Anda menyetujui syarat dan ketentuan
+            Dengan menggunakan Titip Jejak, Anda menyetujui syarat dan ketentuan
             berikut. Mohon baca dengan seksama sebelum menggunakan layanan kami.
           </p>
           <p className="mt-3 text-sm text-stone-400">
@@ -53,7 +53,7 @@ export default function TermsPage() {
               Tujuan Platform
             </h2>
             <p className="text-stone-500 leading-relaxed">
-              TemuKan adalah platform komunitas yang dirancang{" "}
+              Titip Jejak adalah platform komunitas yang dirancang{" "}
               <strong className="text-stone-700">khusus</strong> untuk membantu
               proses pencarian orang hilang di Indonesia. Platform ini hanya
               boleh digunakan untuk tujuan tersebut. Penggunaan di luar konteks
@@ -105,9 +105,9 @@ export default function TermsPage() {
             </h2>
             <p className="text-stone-500 leading-relaxed">
               Pengguna sepenuhnya bertanggung jawab atas kebenaran dan
-              keakuratan informasi yang dilaporkan. TemuKan tidak bertanggung
-              jawab atas kerugian yang timbul akibat informasi yang tidak benar
-              yang diberikan pengguna.
+              keakuratan informasi yang dilaporkan. Titip Jejak tidak
+              bertanggung jawab atas kerugian yang timbul akibat informasi yang
+              tidak benar yang diberikan pengguna.
             </p>
           </div>
 
@@ -117,8 +117,9 @@ export default function TermsPage() {
               Moderasi Konten
             </h2>
             <p className="text-stone-500 leading-relaxed">
-              TemuKan berhak menghapus laporan, memblokir akun, atau mengambil
-              tindakan lain terhadap pengguna yang melanggar syarat ini —{" "}
+              Titip Jejak berhak menghapus laporan, memblokir akun, atau
+              mengambil tindakan lain terhadap pengguna yang melanggar syarat
+              ini —{" "}
               <strong className="text-stone-700">
                 tanpa pemberitahuan sebelumnya
               </strong>

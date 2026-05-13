@@ -20,7 +20,7 @@ export default function AuthLayout({
             <Users2 className="w-12 h-12 text-white" />
           </div>
           <h1 className="relative z-10 text-white font-bold text-3xl tracking-tight">
-            TemuKan
+            Titip Jejak
           </h1>
           <p className="relative z-10 text-orange-100 text-sm mt-1.5">
             Bersama, kita temukan

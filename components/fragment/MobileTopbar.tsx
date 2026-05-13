@@ -16,7 +16,7 @@ export function MobileTopbar({ isHydrated, isLoggedIn, unreadCount }: Props) {
           href="/"
           className="font-bold text-base tracking-tight text-stone-900"
         >
-          Temu<span className="text-orange-500">Kan</span>
+          Titip<span className="text-orange-500"> Jejak</span>
         </Link>
         <div className="flex items-center gap-2">
           {!isHydrated ? (

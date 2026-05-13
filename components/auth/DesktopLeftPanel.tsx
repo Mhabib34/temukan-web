@@ -34,7 +34,7 @@ export function DesktopLeftPanel() {
       {/* Logo */}
       <Link href="/" className="relative z-10 flex items-center gap-2.5">
         <span className="font-bold text-xl text-white tracking-tight">
-          TemuKan
+          Titip Jejak
         </span>
       </Link>
 
@@ -48,7 +48,7 @@ export function DesktopLeftPanel() {
         <div className="space-y-8 max-w-sm">
           <blockquote>
             <p className="text-white text-base italic leading-relaxed">
-              &quot;Berkat bantuan komunitas di TemuKan, ayah saya berhasil
+              &quot;Berkat bantuan komunitas di Titip Jejak, ayah saya berhasil
               ditemukan hanya dalam waktu 24 jam. Rasa syukur kami tak
               terhingga.&quot;
             </p>

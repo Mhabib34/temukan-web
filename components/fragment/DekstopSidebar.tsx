@@ -87,7 +87,7 @@ export function DekstopSidebar({
           href="/"
           className="font-bold text-base tracking-tight text-stone-900"
         >
-          Temu<span className="text-orange-500">Kan</span>
+          Titip<span className="text-orange-500"> Jejak</span>
         </Link>
 
         {/* Right — skeleton saat belum hydrated, cegah flash */}

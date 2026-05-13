@@ -30,7 +30,7 @@ export function Footer() {
           className="text-xs text-stone-400"
           variants={staggerItemFadeOnly}
         >
-          &copy;{currentYear} TemuKan Indonesia. Bersama Memulangkan yang
+          &copy;{currentYear} Titip Jejak Indonesia. Bersama Memulangkan yang
           Terpisah.
         </motion.p>
         <div className="flex flex-wrap justify-center items-center gap-5">

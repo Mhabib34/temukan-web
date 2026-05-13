@@ -14,7 +14,7 @@ export default function LoginPage() {
         <div className="mb-6">
           <h2 className="text-lg font-bold text-stone-800">Masuk ke Akun</h2>
           <p className="text-stone-500 text-sm mt-1">
-            Gunakan akun Anda untuk akses penuh fitur TemuKan.
+            Gunakan akun Anda untuk akses penuh fitur Titip Jejak.
           </p>
         </div>
 
@@ -73,7 +73,8 @@ export default function LoginPage() {
           </div>
 
           <p className="mt-8 text-center text-xs text-stone-400">
-            &copy;{currentYear} TemuKan Indonesia. Bersama dalam kemanusiaan.
+            &copy;{currentYear} Titip Jejak Indonesia. Bersama dalam
+            kemanusiaan.
           </p>
         </div>
       </div>

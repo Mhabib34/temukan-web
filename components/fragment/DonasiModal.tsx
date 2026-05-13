@@ -59,7 +59,7 @@ export function DonasiModal({ isOpen, onClose }: DonasiModalProps) {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-stone-900">
-                      Dukung TemuKan
+                      Dukung Titip Jejak
                     </p>
                     <p className="text-xs text-stone-500">
                       Bantu kami terus beroperasi
@@ -77,7 +77,7 @@ export function DonasiModal({ isOpen, onClose }: DonasiModalProps) {
 
               {/* deskripsi */}
               <p className="text-sm text-stone-500 leading-relaxed">
-                TemuKan adalah platform komunitas nirlaba. Setiap donasi
+                Titip Jejak adalah platform komunitas nirlaba. Setiap donasi
                 membantu kami menjaga server tetap berjalan, mengembangkan fitur
                 baru, dan membantu lebih banyak keluarga menemukan orang
                 tersayang.
