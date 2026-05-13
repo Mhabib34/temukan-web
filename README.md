@@ -1,19 +1,19 @@
-# TemuKan — Web (Frontend)
+# Titip Jejak — Web (Frontend)
 
 > **EN** | Community-powered missing persons platform for Indonesia.  
 > **ID** | Platform pencarian orang hilang berbasis komunitas di Indonesia.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%20v3-orange.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Mhabib34/temukan-web/blob/main/CONTRIBUTING.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Mhabib34/titip-jejak-web/blob/main/CONTRIBUTING.md)
 
 ---
 
 ## 🇬🇧 English
 
-### What is TemuKan?
+### What is Titip Jejak?
 
-TemuKan connects missing persons reporters, finders, and volunteers through technology. When someone goes missing, every minute counts — TemuKan helps information spread faster and reach the right people.
+Titip Jejak connects missing persons reporters, finders, and volunteers through technology. When someone goes missing, every minute counts — Titip Jejak helps information spread faster and reach the right people.
 
 - Report and browse missing persons cases
 - Auto-matching between reports based on location and description
@@ -22,10 +22,10 @@ TemuKan connects missing persons reporters, finders, and volunteers through tech
 
 ### Repositories
 
-| Repo                                                     | Description                  |
-| -------------------------------------------------------- | ---------------------------- |
-| [`temukan-web`](https://github.com/Mhabib34/temukan-web) | This repo — Next.js frontend |
-| [`temukan-api`](https://github.com/Mhabib34/temukan-api) | REST API backend             |
+| Repo                                                             | Description                  |
+| ---------------------------------------------------------------- | ---------------------------- |
+| [`titip-jejak-web`](https://github.com/Mhabib34/titip-jejak-web) | This repo — Next.js frontend |
+| [`titip-jejak-api`](https://github.com/Mhabib34/titip-jejak-api) | REST API backend             |
 
 ### Tech Stack
 
@@ -43,14 +43,14 @@ TemuKan connects missing persons reporters, finders, and volunteers through tech
 - Node.js >= 18
 - npm >= 9
 - A Supabase project ([create one free](https://supabase.com))
-- The API running locally — see [`temukan-api`](https://github.com/Mhabib34/temukan-api)
+- The API running locally — see [`titip-jejak-api`](https://github.com/Mhabib34/titip-jejak-api)
 
 #### Installation
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/Mhabib34/temukan-web.git
-cd temukan-web
+git clone https://github.com/Mhabib34/titip-jejak-web.git
+cd titip-jejak-web
 
 # 2. Install dependencies
 npm install
@@ -67,11 +67,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 #### Environment Variables
 
-| Variable | Description |
-| -------- | ----------- |
-
-|
-| `NEXT_PUBLIC_API_URL` | Base URL of `temukan-api` |
+| Variable              | Description                  |
+| --------------------- | ---------------------------- |
+| `NEXT_PUBLIC_API_URL` | Base URL of`titip-jejak-api` |
 
 ### Contributing
 
@@ -88,23 +86,23 @@ Anyone who deploys a modified version of this platform **must** make their sourc
 
 ## 🇮🇩 Indonesia
 
-### Apa itu TemuKan?
+### Apa itu Titip Jejak?
 
-TemuKan menghubungkan pelapor, penemu, dan relawan pencarian orang hilang melalui teknologi. Platform ini dibangun sebagai proyek nirlaba berbasis komunitas — bukan produk komersial.
+Titip Jejak menghubungkan pelapor, penemu, dan relawan pencarian orang hilang melalui teknologi. Platform ini dibangun sebagai proyek nirlaba berbasis komunitas — bukan produk komersial.
 
 ### Repositori
 
-| Repo                                                     | Keterangan                  |
-| -------------------------------------------------------- | --------------------------- |
-| [`temukan-web`](https://github.com/Mhabib34/temukan-web) | Repo ini — frontend Next.js |
-| [`temukan-api`](https://github.com/Mhabib34/temukan-api) | Backend REST API            |
+| Repo                                                             | Keterangan                  |
+| ---------------------------------------------------------------- | --------------------------- |
+| [`titip-jejak-web`](https://github.com/Mhabib34/titip-jejak-web) | Repo ini — frontend Next.js |
+| [`titip-jejak-api`](https://github.com/Mhabib34/titip-jejak-api) | Backend REST API            |
 
 ### Cara Menjalankan Secara Lokal
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/Mhabib34/temukan-web.git
-cd temukan-web
+git clone https://github.com/Mhabib34/titip-jejak-web.git
+cd titip-jejak-web
 
 # 2. Install dependensi
 npm install
