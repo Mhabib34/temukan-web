@@ -251,7 +251,7 @@ export default function HomePage() {
           viewport={{ once: true, margin: "-40px" }}
         >
           <h2 className="text-lg font-bold text-stone-900 mb-1">
-            Bagaimana TemuKan Membantu?
+            Bagaimana Titip Jejak Membantu?
           </h2>
           <p className="text-xs text-stone-500 mb-5">
             3 langkah sederhana untuk memulai pencarian

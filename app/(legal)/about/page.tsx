@@ -3,9 +3,9 @@ import Link from "next/link";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export const metadata: Metadata = {
-  title: "Tentang Kami — TemuKan",
+  title: "Tentang Kami — Titip Jejak",
   description:
-    "TemuKan hadir dari keprihatinan terhadap kasus orang hilang di Indonesia. Kenali misi, visi, dan orang di balik platform komunitas ini.",
+    "Titip Jejak hadir dari keprihatinan terhadap kasus orang hilang di Indonesia. Kenali misi, visi, dan orang di balik platform komunitas ini.",
 };
 
 const values = [
@@ -27,7 +27,7 @@ const values = [
   {
     icon: "💛",
     title: "Nirlaba",
-    desc: "Tidak ada motif komersial. TemuKan ada semata-mata untuk membantu, bukan untuk mencari keuntungan.",
+    desc: "Tidak ada motif komersial. Titip Jejak ada semata-mata untuk membantu, bukan untuk mencari keuntungan.",
   },
 ];
 
@@ -45,8 +45,8 @@ export default function AboutPage() {
             <span className="text-orange-500">berhak ditemukan.</span>
           </h1>
           <p className="text-stone-500 text-lg leading-relaxed">
-            TemuKan lahir dari keprihatinan mendalam terhadap kasus orang hilang
-            di Indonesia yang kerap tidak tertangani dengan cepat — karena
+            Titip Jejak lahir dari keprihatinan mendalam terhadap kasus orang
+            hilang di Indonesia yang kerap tidak tertangani dengan cepat, karena
             keterbatasan informasi, jangkauan, dan koordinasi.
           </p>
         </div>
@@ -55,17 +55,17 @@ export default function AboutPage() {
         <div className="mb-16 max-w-6xl">
           <div className="rounded-3xl bg-stone-50 p-8 md:p-10 border border-stone-100">
             <h2 className="text-2xl font-extrabold text-stone-900 mb-5">
-              Kisah di Balik TemuKan
+              Kisah di Balik Titip Jejak
             </h2>
             <div className="space-y-4 text-stone-500 leading-relaxed">
               <p>
                 Di Indonesia, ribuan laporan orang hilang masuk setiap tahunnya.
-                Namun banyak di antaranya tidak mendapat respons cepat — bukan
+                Namun banyak di antaranya tidak mendapat respons cepat, bukan
                 karena tidak ada yang peduli, melainkan karena informasinya
                 tersebar dan tidak terkoordinasi.
               </p>
               <p>
-                TemuKan hadir sebagai jembatan: menghubungkan{" "}
+                Titip Jejak hadir sebagai jembatan: menghubungkan{" "}
                 <strong className="text-stone-700">
                   penemu, pencari, dan relawan
                 </strong>{" "}
@@ -120,9 +120,10 @@ export default function AboutPage() {
                 Muhammad Habib
               </h3>
               <p className="text-stone-500 leading-relaxed text-sm">
-                Developer independen yang membangun TemuKan sebagai kontribusi
-                nyata untuk masyarakat Indonesia. Platform ini bersifat nirlaba
-                dan berbasis komunitas — tidak ada investor, tidak ada iklan.
+                Developer independen yang membangun Titip Jejak sebagai
+                kontribusi nyata untuk masyarakat Indonesia. Platform ini
+                bersifat nirlaba dan berbasis komunitas — tidak ada investor,
+                tidak ada iklan.
               </p>
               <a
                 href="mailto:mhabib34official@gmail.com"
@@ -138,10 +139,10 @@ export default function AboutPage() {
         <div className="max-w-6xl">
           <div className="rounded-3xl bg-stone-900 p-8 md:p-10 text-center">
             <h2 className="text-2xl font-extrabold text-white mb-3">
-              Dukung TemuKan
+              Dukung Titip Jejak Tetap Gratis untuk Semua
             </h2>
             <p className="text-stone-400 mb-6 leading-relaxed">
-              TemuKan berjalan tanpa iklan dan investor. Jika Anda ingin
+              Titip Jejak berjalan tanpa iklan dan investor. Jika Anda ingin
               membantu platform ini terus beroperasi dan berkembang, donasi
               kecil Anda sangat berarti.
             </p>

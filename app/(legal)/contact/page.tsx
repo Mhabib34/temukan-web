@@ -3,9 +3,9 @@ import Link from "next/link";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export const metadata: Metadata = {
-  title: "Kontak — TemuKan",
+  title: "Kontak — Titip Jejak",
   description:
-    "Hubungi tim TemuKan untuk laporan bug, pertanyaan, kerja sama, atau permintaan penghapusan data.",
+    "Hubungi tim Titip Jejak untuk laporan bug, pertanyaan, kerja sama, atau permintaan penghapusan data.",
 };
 
 const topics = [
@@ -17,7 +17,7 @@ const topics = [
   {
     icon: "❓",
     title: "Pertanyaan Umum",
-    desc: "Ada yang ingin Anda tanyakan seputar cara kerja atau fitur TemuKan?",
+    desc: "Ada yang ingin Anda tanyakan seputar cara kerja atau fitur Titip Jejak?",
   },
   {
     icon: "🤝",
@@ -45,7 +45,7 @@ export default function ContactPage() {
           </h1>
           <p className="text-stone-500 text-lg leading-relaxed">
             Punya pertanyaan, masukan, atau perlu bantuan? Jangan ragu untuk
-            menghubungi kami — kami akan merespons secepat mungkin.
+            menghubungi kami, kami akan merespons secepat mungkin.
           </p>
         </div>
 
@@ -112,9 +112,9 @@ export default function ContactPage() {
 
           {/* Note */}
           <p className="text-sm text-stone-400 px-1">
-            TemuKan adalah platform nirlaba yang dikelola secara mandiri. Kami
-            menjawab pesan sesuai kemampuan dan ketersediaan. Terima kasih atas
-            kesabaran Anda.
+            Titip Jejak adalah platform nirlaba yang dikelola secara mandiri.
+            Kami menjawab pesan sesuai kemampuan dan ketersediaan. Terima kasih
+            atas kesabaran Anda.
           </p>
         </div>
 

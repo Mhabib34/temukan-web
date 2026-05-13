@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Kebijakan Privasi — TemuKan",
+  title: "Kebijakan Privasi — Titip Jejak",
   description:
-    "Pelajari bagaimana TemuKan mengumpulkan, menggunakan, dan melindungi data pribadi Anda dalam platform pencarian orang hilang berbasis komunitas.",
+    "Pelajari bagaimana Titip Jejak mengumpulkan, menggunakan, dan melindungi data pribadi Anda dalam platform pencarian orang hilang berbasis komunitas.",
 };
 
 const sections = [
@@ -83,8 +83,8 @@ const sections = [
       <p className="text-stone-500 leading-relaxed">
         Kebijakan ini dapat diperbarui sewaktu-waktu. Perubahan signifikan akan
         diberitahukan melalui email atau notifikasi di platform. Penggunaan
-        layanan TemuKan setelah perubahan diterbitkan berarti Anda menyetujui
-        kebijakan yang diperbarui.
+        layanan Titip Jejak setelah perubahan diterbitkan berarti Anda
+        menyetujui kebijakan yang diperbarui.
       </p>
     ),
   },
